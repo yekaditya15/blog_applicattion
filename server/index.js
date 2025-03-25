@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes.js";
 import blogRoutes from "./routes/blogRoutes.js";
 import sentimentRoutes from "./routes/sentimentRoutes.js"; // Import sentiment routes
+import cors from "cors";
 
 dotenv.config();
 
@@ -13,6 +14,11 @@ app.use(express.json());
 
 // Connect to the database
 connectDB();
+app.use(
+  cors({
+    origin: "http://localhost:3000", // Allow only requests from localhost:3000
+  })
+);
 
 // Routes
 app.use("/api/auth", authRoutes);

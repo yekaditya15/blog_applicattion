@@ -40,7 +40,7 @@ const blogSchema = new mongoose.Schema({
   },
   topic: {
     type: String,
-    required: true,
+    required: true, // Topic is now a required field
     enum: [
       "Politics",
       "Technology",

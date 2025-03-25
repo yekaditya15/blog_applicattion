@@ -1,5 +1,5 @@
 import Blog from "../models/Blog.js";
-import { analyzeSentiment } from "../controllers/sentimentController.js"; // Import sentiment analysis
+//import { analyzeSentiment } from "../controllers/sentimentController.js"; // Import sentiment analysis
 
 // Create Blog
 export const createBlog = async (req, res) => {
@@ -8,13 +8,7 @@ export const createBlog = async (req, res) => {
   const userID = req.user.userID;
 
   try {
-    // Analyze sentiment of the blog text
-    const sentimentResponse = await analyzeSentiment({
-      body: { text: textBody },
-    });
-    const sentiment = sentimentResponse.sentiment;
-
-    // Create new blog with sentiment and other details
+    // Create new blog without sentiment analysis
     const newBlog = new Blog({
       title,
       textBody,
@@ -22,13 +16,12 @@ export const createBlog = async (req, res) => {
       creationDateTime,
       userID,
       topic,
-      sentiment,
     });
 
     await newBlog.save();
-    res.status(201).json(newBlog);
+    res.status(201).json(newBlog); // Send the created blog in the response
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(400).json({ message: err.message }); // Ensure error message is captured correctly
   }
 };
 

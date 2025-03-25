@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 
 // Register user
 export const registerUser = async (req, res) => {
-  const { name, email, username, password, gender, topics } = req.body;
+  const { name, email, username, password, gender } = req.body;
 
   try {
     // Check if the user already exists
@@ -14,14 +14,19 @@ export const registerUser = async (req, res) => {
     }
 
     // Create new user
-    const user = new User({ name, email, username, password, gender, topics });
+    const user = new User({ name, email, username, password, gender });
     user.password = await bcrypt.hash(password, 10); // Encrypt password
     await user.save();
 
     // Generate JWT token
     const token = generateToken(user._id);
 
-    res.status(201).json({ message: "User registered successfully", token });
+    // Return response with token and username
+    res.status(201).json({
+      message: "User registered successfully",
+      token,
+      username: user.username,
+    });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -41,7 +46,8 @@ export const loginUser = async (req, res) => {
     // Generate JWT token
     const token = generateToken(user._id);
 
-    res.json({ message: "Login successful", token });
+    // Return response with token and username
+    res.json({ message: "Login successful", token, username: user.username });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -50,7 +56,7 @@ export const loginUser = async (req, res) => {
 // Helper function to generate JWT token
 const generateToken = (userId) => {
   return jwt.sign({ userID: userId }, process.env.JWT_SECRET, {
-    expiresIn: "1h",
+    expiresIn: "1h", // Token expires in 1 hour
   });
 };
 
@@ -64,6 +70,6 @@ export const getUserProfile = async (req, res) => {
     }
     res.json(user); // Return user details
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(400).json({ message: err.message }); // Corrected error handling
   }
 };
