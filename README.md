@@ -49,7 +49,7 @@ This is a **blog application** built using the **MERN stack** (MongoDB, Express.
 1. Clone the repository:
    ```bash
    git clone https://github.com/your-username/blog-app.git
-   cd blog-app-backend
+   cd server
    ```
 
 2. Install dependencies:
@@ -75,7 +75,7 @@ This is a **blog application** built using the **MERN stack** (MongoDB, Express.
 
 1. Navigate to the frontend directory (React app):
    ```bash
-   cd blog-app-frontend
+   cd client
    ```
 
 2. Install dependencies:
