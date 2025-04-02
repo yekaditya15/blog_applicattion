@@ -16,7 +16,10 @@ connectDB();
 
 app.use(
   cors({
-    origin: ["https://stack-cart-client.vercel.app", "http://localhost:3000"],
+    origin: [
+      "https://blog-applicattionclient.vercel.app/",
+      "http://localhost:3000",
+    ],
     methods: ["POST", "GET", "PUT", "DELETE", "PATCH"],
     credentials: true,
   })
