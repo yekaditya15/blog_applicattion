@@ -13,11 +13,17 @@ app.use(express.json());
 
 // Connect to the database
 connectDB();
+
 app.use(
   cors({
     origin: "http://localhost:3000", // Allow only requests from localhost:3000
   })
 );
+
+// ✅ **Home Route (Check Deployment)**
+app.get("/", (req, res) => {
+  res.send("🚀 Backend is successfully deployed and running!");
+});
 
 // Routes
 app.use("/api/auth", authRoutes);
