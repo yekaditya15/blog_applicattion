@@ -16,10 +16,11 @@ connectDB();
 
 app.use(
   cors({
-    origin: "http://localhost:3000", // Allow only requests from localhost:3000
+    origin: ["https://stack-cart-client.vercel.app", "http://localhost:3000"],
+    methods: ["POST", "GET", "PUT", "DELETE", "PATCH"],
+    credentials: true,
   })
 );
-
 // ✅ **Home Route (Check Deployment)**
 app.get("/", (req, res) => {
   res.send("🚀 Backend is successfully deployed and running!");
