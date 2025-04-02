@@ -1,32 +1,76 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/Register.css"; // Make sure to add this CSS
+import { useDispatch, useSelector } from "react-redux";
+import { registerUser, clearError } from "../redux/slices/authSlice";
+import "../styles/Register.css";
 
-const Register = ({ setIsAuthenticated, setUsername }) => {
+const Register = () => {
   const navigate = useNavigate();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [username, setUsernameInput] = useState("");
-  const [password, setPassword] = useState("");
-  const [gender, setGender] = useState("");
+  const dispatch = useDispatch();
+  const { loading, error, isAuthenticated } = useSelector(
+    (state) => state.auth
+  );
 
-  const handleRegister = async (e) => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    username: "",
+    password: "",
+    confirmPassword: "",
+    gender: "",
+  });
+  const [passwordError, setPasswordError] = useState("");
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/");
+    }
+    return () => {
+      dispatch(clearError());
+    };
+  }, [isAuthenticated, navigate, dispatch]);
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+
+    // Clear password error when user types in either password field
+    if (e.target.name === "password" || e.target.name === "confirmPassword") {
+      setPasswordError("");
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/api/auth/register",
-        { name, email, username, password, gender }
-      );
-      localStorage.setItem("authToken", response.data.token);
-      localStorage.setItem("username", response.data.username); // Store the username
-      setIsAuthenticated(true);
-      setUsername(response.data.username); // Update state with the username
-      navigate("/");
-    } catch (err) {
-      console.error(err);
+    // Validate passwords match
+    if (formData.password !== formData.confirmPassword) {
+      setPasswordError("Passwords do not match");
+      return;
     }
+
+    // Validate password strength
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(formData.password)) {
+      setPasswordError(
+        "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+      );
+      return;
+    }
+
+    // Dispatch register action
+    dispatch(
+      registerUser({
+        name: formData.name,
+        email: formData.email,
+        username: formData.username,
+        password: formData.password,
+        gender: formData.gender,
+      })
+    );
   };
 
   return (
@@ -43,40 +87,66 @@ const Register = ({ setIsAuthenticated, setUsername }) => {
 
       <div className="register-right">
         <h2>Create your account</h2>
-        <form onSubmit={handleRegister}>
+        {error && <p className="error-message">{error}</p>}
+        {passwordError && <p className="error-message">{passwordError}</p>}
+
+        <form onSubmit={handleSubmit}>
           <input
             type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
             placeholder="Full Name"
             required
+            disabled={loading}
           />
+
           <input
             type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
             placeholder="Email Address"
             required
+            disabled={loading}
           />
+
           <input
             type="text"
-            value={username}
-            onChange={(e) => setUsernameInput(e.target.value)}
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
             placeholder="Username"
             required
+            disabled={loading}
           />
+
           <input
             type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
             placeholder="Password"
             required
+            disabled={loading}
+          />
+
+          <input
+            type="password"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            placeholder="Confirm Password"
+            required
+            disabled={loading}
           />
 
           <select
-            value={gender}
-            onChange={(e) => setGender(e.target.value)}
+            name="gender"
+            value={formData.gender}
+            onChange={handleChange}
             required
+            disabled={loading}
           >
             <option value="">Select Gender</option>
             <option value="Male">Male</option>
@@ -84,13 +154,14 @@ const Register = ({ setIsAuthenticated, setUsername }) => {
             <option value="Other">Other</option>
           </select>
 
-          <button type="submit" className="register-btn">
-            Register
+          <button type="submit" className="register-btn" disabled={loading}>
+            {loading ? "Creating Account..." : "Register"}
           </button>
         </form>
+
         <div className="login-prompt">
           <span>Already have an account?</span>
-          <a href="/login">Log in</a>
+          <a href="/login">Sign in</a>
         </div>
       </div>
     </div>

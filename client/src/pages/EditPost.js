@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { updateBlog } from "../redux/slices/blogSlice";
 import axios from "axios";
+import "../styles/CreatePost.css"; // Reusing CreatePost styles
 
 const EditPost = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [title, setTitle] = useState("");
   const [textBody, setTextBody] = useState("");
   const [topic, setTopic] = useState("");
   const [image, setImage] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchBlog = async () => {
@@ -16,13 +23,17 @@ const EditPost = () => {
         const response = await axios.get(
           `http://localhost:5000/api/blog/readBlog/${id}`
         );
-        const blog = response.data;
+        // Access the blog data correctly from the response
+        const blog = response.data.blog;
         setTitle(blog.title);
         setTextBody(blog.textBody);
         setTopic(blog.topic);
-        setImage(blog.image);
+        setImage(blog.image || "");
+        setLoading(false);
       } catch (err) {
         console.error(err);
+        setError("Failed to fetch blog details");
+        setLoading(false);
       }
     };
 
@@ -32,26 +43,28 @@ const EditPost = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const token = localStorage.getItem("authToken"); // Get the auth token from localStorage
-    if (!token) {
-      return alert("You must be logged in to update this post.");
-    }
-
     try {
-      const response = await axios.patch(
-        `http://localhost:5000/api/blog/editBlog/${id}`,
-        { title, textBody, topic, image },
-        { headers: { "x-auth-token": token } } // Send token in request headers
-      );
-      navigate(`/blog/${id}`); // Redirect to the updated blog page
+      await dispatch(
+        updateBlog({
+          blogId: id,
+          title,
+          textBody,
+          topic,
+          image,
+        })
+      ).unwrap();
+      navigate(`/blog/${id}`);
     } catch (err) {
+      setError("Failed to update blog");
       console.error(err);
-      alert("Failed to update the blog");
     }
   };
 
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div className="error-message">{error}</div>;
+
   return (
-    <div>
+    <div className="create-post-container">
       <h2>Edit Blog</h2>
       <form onSubmit={handleSubmit}>
         <input
@@ -61,12 +74,14 @@ const EditPost = () => {
           placeholder="Title"
           required
         />
+
         <textarea
           value={textBody}
           onChange={(e) => setTextBody(e.target.value)}
           placeholder="Content"
           required
         />
+
         <select
           value={topic}
           onChange={(e) => setTopic(e.target.value)}
@@ -80,13 +95,15 @@ const EditPost = () => {
           <option value="Education">Education</option>
           <option value="Entertainment">Entertainment</option>
         </select>
+
         <input
           type="text"
           value={image}
           onChange={(e) => setImage(e.target.value)}
           placeholder="Image URL"
         />
-        <button type="submit">Update</button>
+
+        <button type="submit">Update Blog</button>
       </form>
     </div>
   );

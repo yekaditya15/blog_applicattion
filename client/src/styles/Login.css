@@ -26,7 +26,7 @@
 
 .login-right {
   flex: 1;
-  background-color: #fff;
+  background-color: white;
   padding: 40px 50px;
   display: flex;
   flex-direction: column;
@@ -121,7 +121,7 @@ button:hover {
   }
 
   .login-left {
-    background-color: #fff;
+    background-color: white;
   }
 
   .left-image-container {

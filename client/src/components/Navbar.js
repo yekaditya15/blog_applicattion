@@ -1,50 +1,49 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { FaHome } from "react-icons/fa"; // Import home icon
-import { FaCaretDown } from "react-icons/fa"; // Import down arrow icon
-import "../styles/Navbar.css"; // Make sure you include the correct styles
+import { FaHome } from "react-icons/fa"; // Home icon import
+import { FaCaretDown } from "react-icons/fa"; // Dropdown icon import
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../redux/slices/authSlice"; // Logout action import
+import "../styles/Navbar.css"; // Make sure the correct CSS is imported
 
-const Navbar = ({ isAuthenticated, setIsAuthenticated }) => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State to manage dropdown visibility
+const Navbar = () => {
+  const dispatch = useDispatch();
+  const { isAuthenticated, username } = useSelector((state) => state.auth); // Fetch authentication and username from Redux
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State to control dropdown visibility
 
-  /*************  ✨ Codeium Command ⭐  *************/
-  /******  48eb3b76-7de6-4275-bc51-1232cdd6d0fc  *******/ const handleLogout =
-    () => {
-      localStorage.removeItem("authToken");
-      localStorage.removeItem("username"); // Clear username from localStorage
-      setIsAuthenticated(false);
-      setIsDropdownOpen(false); // Close the dropdown after logout
-    };
+  // Logout function
+  const handleLogout = () => {
+    dispatch(logout()); // Dispatch logout action
+    setIsDropdownOpen(false); // Close dropdown after logout
+  };
 
-  const username = localStorage.getItem("username"); // Get the username from localStorage
-
+  // Toggle dropdown menu visibility
   const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen); // Toggle dropdown visibility
+    setIsDropdownOpen(!isDropdownOpen);
   };
 
   return (
     <nav className="navbar">
       <div className="navbar-left">
-        {/* Home icon acting as Home link */}
+        {/* Home link with Home icon */}
         <Link to="/" className="navbar-logo">
-          <FaHome size={24} color="#333" /> {/* Home Icon */}
-          <span className="brand-name">WriteHub</span> {/* Branding name */}
+          <FaHome size={24} color="#333" />
+          <span className="brand-name">WriteHub</span>
         </Link>
       </div>
 
-      {/* Right side - Authentication Links */}
       <div className="navbar-right">
+        {/* Display links if the user is authenticated */}
         {isAuthenticated ? (
           <>
-            {/* Create Blog button, placed to the right but left of the username */}
+            {/* Link to create blog */}
             <Link to="/create" className="create-post-link">
-              Create Blog
+              Create Post
             </Link>
-            {/* Username in capital letters, on the far right with dropdown arrow */}
+            {/* Username with dropdown */}
             <div className="user-menu">
               <span className="username" onClick={toggleDropdown}>
-                {username.toUpperCase()} {/* Display username in uppercase */}
-                <FaCaretDown size={12} /> {/* Down arrow icon */}
+                {username} <FaCaretDown size={12} />
               </span>
               {isDropdownOpen && (
                 <div className="dropdown">
@@ -59,6 +58,7 @@ const Navbar = ({ isAuthenticated, setIsAuthenticated }) => {
             </div>
           </>
         ) : (
+          // Display login and register links if not authenticated
           <div className="auth-links">
             <Link to="/login" className="login-button">
               Log in

@@ -1,36 +1,36 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/Login.css"; // Import custom styles
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser, clearError } from "../redux/slices/authSlice";
+import "../styles/Login.css";
 
-const Login = ({ setIsAuthenticated, setUsername }) => {
+const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { loading, error, isAuthenticated } = useSelector(
+    (state) => state.auth
+  );
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/");
+    }
+    return () => {
+      dispatch(clearError());
+    };
+  }, [isAuthenticated, navigate, dispatch]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/api/auth/login",
-        { email, password }
-      );
-      localStorage.setItem("authToken", response.data.token);
-      localStorage.setItem("username", response.data.username); // Store the username
-      setIsAuthenticated(true);
-      setUsername(response.data.username); // Update state with the username
-      navigate("/");
-    } catch (err) {
-      setError("Invalid email or password");
-    }
+    dispatch(loginUser({ email, password }));
   };
 
   return (
     <div className="login-container">
       <div className="login-left">
-        {/* Left side image background */}
         <div className="left-image-container">
           <img
             src="https://firebasestorage.googleapis.com/v0/b/portfolio-c5c0a.appspot.com/o/Screenshot%202025-04-02%20113842.png?alt=media&token=b0732217-99e8-4fd4-85f6-be775c46351a"
@@ -50,6 +50,7 @@ const Login = ({ setIsAuthenticated, setUsername }) => {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email Address"
             required
+            disabled={loading}
           />
           <input
             type="password"
@@ -57,10 +58,11 @@ const Login = ({ setIsAuthenticated, setUsername }) => {
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Password"
             required
+            disabled={loading}
           />
 
-          <button type="submit" className="login-btn">
-            Login
+          <button type="submit" className="login-btn" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
         <div className="signup-prompt">

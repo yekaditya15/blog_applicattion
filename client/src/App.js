@@ -1,79 +1,45 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   BrowserRouter as Router,
   Route,
   Routes,
   Navigate,
 } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import CreatePost from "./pages/CreatePost";
 import BlogDetail from "./pages/BlogDetail";
 import EditPost from "./pages/EditPost";
-import UserProfile from "./components/UserProfile"; // Import UserProfile component
+import UserProfile from "./components/UserProfile";
 import Navbar from "./components/Navbar";
 
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [username, setUsername] = useState("");
-
-  useEffect(() => {
-    const token = localStorage.getItem("authToken");
-    const storedUsername = localStorage.getItem("username");
-    if (token) {
-      setIsAuthenticated(true);
-      setUsername(storedUsername); // Set username if logged in
-    }
-  }, []);
+  const { isAuthenticated } = useSelector((state) => state.auth);
 
   return (
     <Router>
-      <Navbar
-        isAuthenticated={isAuthenticated}
-        setIsAuthenticated={setIsAuthenticated}
-      />
+      <Navbar />
       <Routes>
-        <Route path="/" element={<Home isAuthenticated={isAuthenticated} />} />
+        <Route path="/" element={<Home />} />
         <Route
           path="/login"
-          element={
-            isAuthenticated ? (
-              <Navigate to="/" />
-            ) : (
-              <Login
-                setIsAuthenticated={setIsAuthenticated}
-                setUsername={setUsername}
-              />
-            )
-          }
+          element={isAuthenticated ? <Navigate to="/" /> : <Login />}
         />
         <Route
           path="/register"
-          element={
-            isAuthenticated ? (
-              <Navigate to="/" />
-            ) : (
-              <Register
-                setIsAuthenticated={setIsAuthenticated}
-                setUsername={setUsername}
-              />
-            )
-          }
+          element={isAuthenticated ? <Navigate to="/" /> : <Register />}
         />
         <Route
           path="/create"
           element={isAuthenticated ? <CreatePost /> : <Navigate to="/login" />}
         />
-        <Route
-          path="/blog/:id"
-          element={<BlogDetail isAuthenticated={isAuthenticated} />}
-        />
+        <Route path="/blog/:id" element={<BlogDetail />} />
         <Route
           path="/editBlog/:id"
           element={isAuthenticated ? <EditPost /> : <Navigate to="/login" />}
         />
-        {/* Profile route */}
         <Route
           path="/profile"
           element={isAuthenticated ? <UserProfile /> : <Navigate to="/login" />}
