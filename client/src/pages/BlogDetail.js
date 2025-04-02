@@ -15,7 +15,7 @@ const BlogDetail = () => {
     const fetchBlog = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/blog/readBlog/${id}`
+          `https://blog-applicattionserver.vercel.app/api/blog/readBlog/${id}`
         );
         setBlog(response.data.blog);
         setComments(response.data.comments); // Set the comments
@@ -48,7 +48,7 @@ const BlogDetail = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/blog/comment/${id}`,
+        `https://blog-applicattionserver.vercel.app/api/blog/comment/${id}`,
         { text: newComment },
         { headers: { "x-auth-token": token } }
       );
@@ -68,9 +68,12 @@ const BlogDetail = () => {
     if (confirmDelete) {
       try {
         const token = localStorage.getItem("authToken");
-        await axios.delete(`http://localhost:5000/api/blog/deleteBlog/${id}`, {
-          headers: { "x-auth-token": token },
-        });
+        await axios.delete(
+          `https://blog-applicattionserver.vercel.app/api/blog/deleteBlog/${id}`,
+          {
+            headers: { "x-auth-token": token },
+          }
+        );
         alert("Blog deleted successfully");
         navigate("/"); // Redirect to home page
       } catch (err) {

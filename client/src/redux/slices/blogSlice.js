@@ -8,7 +8,7 @@ export const createBlog = createAsyncThunk(
     try {
       const token = localStorage.getItem("authToken");
       const response = await axios.post(
-        "http://localhost:5000/api/blog/createBlog",
+        "https://blog-applicattionserver.vercel.app/api/blog/createBlog",
         { title, textBody, topic, image },
         {
           headers: { "x-auth-token": token },
@@ -27,7 +27,7 @@ export const getAllBlogs = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/blog/readAllBlogs"
+        "https://blog-applicattionserver.vercel.app/api/blog/readAllBlogs"
       );
       return response.data;
     } catch (error) {
@@ -42,7 +42,7 @@ export const getBlogById = createAsyncThunk(
   async (blogId, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/blog/readBlog/${blogId}`
+        `https://blog-applicattionserver.vercel.app/api/blog/readBlog/${blogId}`
       );
       return response.data;
     } catch (error) {
@@ -58,7 +58,7 @@ export const updateBlog = createAsyncThunk(
     try {
       const token = localStorage.getItem("authToken");
       const response = await axios.patch(
-        `http://localhost:5000/api/blog/editBlog/${blogId}`,
+        `https://blog-applicattionserver.vercel.app/api/blog/editBlog/${blogId}`,
         { title, textBody, topic, image },
         {
           headers: { "x-auth-token": token },
@@ -78,7 +78,7 @@ export const deleteBlog = createAsyncThunk(
     try {
       const token = localStorage.getItem("authToken");
       await axios.delete(
-        `http://localhost:5000/api/blog/deleteBlog/${blogId}`,
+        `https://blog-applicattionserver.vercel.app/api/blog/deleteBlog/${blogId}`,
         {
           headers: { "x-auth-token": token },
         }
@@ -97,7 +97,7 @@ export const addComment = createAsyncThunk(
     try {
       const token = localStorage.getItem("authToken");
       const response = await axios.post(
-        `http://localhost:5000/api/blog/comment/${blogId}`,
+        `https://blog-applicattionserver.vercel.app/api/blog/comment/${blogId}`,
         { text },
         {
           headers: { "x-auth-token": token },

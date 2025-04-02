@@ -20,7 +20,7 @@ const Home = ({ isAuthenticated }) => {
     const fetchBlogs = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/blog/readAllBlogs"
+          "https://blog-applicattionserver.vercel.app/api/blog/readAllBlogs"
         );
         setBlogs(response.data);
       } catch (err) {

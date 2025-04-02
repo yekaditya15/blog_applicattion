@@ -10,7 +10,7 @@ const UserProfile = () => {
       const token = localStorage.getItem("authToken");
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/auth/profile",
+          "https://blog-applicattionserver.vercel.app/api/auth/profile",
           {
             headers: { "x-auth-token": token },
           }

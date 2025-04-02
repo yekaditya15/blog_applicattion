@@ -21,7 +21,7 @@ const EditPost = () => {
     const fetchBlog = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/blog/readBlog/${id}`
+          `https://blog-applicattionserver.vercel.app/api/blog/readBlog/${id}`
         );
         // Access the blog data correctly from the response
         const blog = response.data.blog;

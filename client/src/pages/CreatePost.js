@@ -20,7 +20,7 @@ const CreatePost = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/blog/createBlog",
+        "https://blog-applicattionserver.vercel.app/api/blog/createBlog",
         { title, textBody, topic, image }, // Sending topic along with other post details
         {
           headers: { "x-auth-token": token },
