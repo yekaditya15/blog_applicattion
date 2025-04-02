@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import "../styles/CreatePost.css";
 const CreatePost = () => {
   const navigate = useNavigate();
   const [title, setTitle] = useState("");

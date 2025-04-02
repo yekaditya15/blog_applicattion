@@ -1,11 +1,20 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import BlogCard from "../components/BlogCard";
-import TopicFilter from "./TopicFilter";
+import "../styles/Home.css"; // Ensure the correct styles are linked
+
 const Home = ({ isAuthenticated }) => {
   const [blogs, setBlogs] = useState([]);
-  const [selectedTopic, setSelectedTopic] = useState(""); // For topic filtering
-  const [username, setUsername] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("Home"); // For topic filtering
+  const [categories] = useState([
+    "Home",
+    "Politics",
+    "Technology",
+    "Sports",
+    "Health",
+    "Education",
+    "Entertainment",
+  ]); // Categories for filtering
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -20,34 +29,42 @@ const Home = ({ isAuthenticated }) => {
     };
 
     fetchBlogs();
-
-    const storedUsername = localStorage.getItem("username");
-    if (storedUsername) {
-      setUsername(storedUsername);
-    }
   }, []);
 
-  // Filter blogs based on the selected topic
-  const filteredBlogs = selectedTopic
-    ? blogs.filter((blog) => blog.topic === selectedTopic)
-    : blogs;
+  // Filter blogs based on the selected category
+  const filteredBlogs =
+    selectedCategory === "Home"
+      ? blogs // Show all blogs if Home is selected
+      : blogs.filter((blog) => blog.topic === selectedCategory);
+
+  // Function to change category selection
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+  };
 
   return (
-    <div>
-      <h2>Blog Posts</h2>
-      {isAuthenticated && username && <h3>Welcome, {username}!</h3>}
+    <div className="home-container">
+      {/* Category Navigation */}
+      <div className="category-nav">
+        {categories.map((category) => (
+          <div
+            key={category}
+            className={`category-link ${
+              selectedCategory === category ? "active" : ""
+            }`}
+            onClick={() => handleCategoryChange(category)}
+          >
+            {category}
+          </div>
+        ))}
+      </div>
 
-      {/* Topic Filter Slider */}
-      <TopicFilter
-        selectedTopic={selectedTopic}
-        setSelectedTopic={setSelectedTopic}
-      />
-
+      {/* Blogs Display */}
       <div className="blogs-container">
         {filteredBlogs.length > 0 ? (
           filteredBlogs.map((blog) => <BlogCard key={blog._id} blog={blog} />)
         ) : (
-          <p>No blogs found for this topic.</p>
+          <p>No blogs found for this category.</p>
         )}
       </div>
     </div>

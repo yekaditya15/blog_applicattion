@@ -1,0 +1,38 @@
+/* User Profile Page Styling */
+.profile-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+h2 {
+  font-size: 2rem;
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.profile-info {
+  font-size: 1.1rem;
+  color: #444;
+}
+
+.profile-info p {
+  margin: 10px 0;
+}
+
+.profile-info strong {
+  font-weight: 600;
+}
+
+/* Loading State */
+.loading {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #333;
+}

@@ -1,0 +1,143 @@
+/* Login Page Layout */
+.login-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.login-left {
+  flex: 1;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative; /* Make sure the content aligns with the image */
+}
+
+.left-image-container {
+  height: 100%;
+  overflow: hidden;
+}
+
+.login-left-image {
+  width: max-content;
+  height: 100%;
+  object-fit: cover;
+}
+
+.login-right {
+  flex: 1;
+  background-color: #fff;
+  padding: 40px 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* Align content to the top */
+  margin-top: 200px; /* Pull the form up */
+}
+
+h2 {
+  font-size: 1.8rem;
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.error-message {
+  color: red;
+  font-size: 1rem;
+  margin-bottom: 15px;
+}
+
+form {
+  width: 100%;
+  max-width: 400px; /* Limit the form width */
+  margin: 0 auto; /* Center the form */
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  box-sizing: border-box; /* Ensure padding is included in the width */
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.forgot-password-link {
+  color: #007bff;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.forgot-password-link:hover {
+  text-decoration: underline;
+}
+
+.signup-prompt {
+  margin-top: 20px;
+  font-size: 1rem;
+}
+
+.signup-prompt a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.signup-prompt a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .login-container {
+    flex-direction: column;
+  }
+
+  .login-left,
+  .login-right {
+    flex: none;
+    width: 100%;
+  }
+
+  .login-right {
+    padding: 30px;
+    margin-top: 0; /* Remove margin-top on smaller screens */
+  }
+
+  .login-left {
+    background-color: #fff;
+  }
+
+  .left-image-container {
+    width: 100%;
+    height: 300px; /* Set a specific height for smaller screens */
+  }
+
+  .login-left-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .login-left,
+  .login-right {
+    display: flex;
+    justify-content: center;
+  }
+}

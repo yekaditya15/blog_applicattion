@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import "../styles/UserProfile.css"; // Import the custom CSS for User Profile
 
 const UserProfile = () => {
   const [user, setUser] = useState(null);
@@ -23,15 +24,22 @@ const UserProfile = () => {
     fetchUserProfile();
   }, []);
 
-  if (!user) return <div>Loading...</div>;
+  if (!user) return <div className="loading">Loading...</div>;
 
   return (
-    <div>
+    <div className="profile-container">
       <h2>User Profile</h2>
-      <p>Name: {user.name}</p>
-      <p>Email: {user.email}</p>
-      <p>Gender: {user.gender}</p>
-      <p>Topics: {user.topics.join(", ")}</p>
+      <div className="profile-info">
+        <p>
+          <strong>Name:</strong> {user.name}
+        </p>
+        <p>
+          <strong>Email:</strong> {user.email}
+        </p>
+        <p>
+          <strong>Gender:</strong> {user.gender}
+        </p>
+      </div>
     </div>
   );
 };

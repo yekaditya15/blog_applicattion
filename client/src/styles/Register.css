@@ -1,0 +1,134 @@
+/* Register Page Layout */
+.register-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.register-left {
+  flex: 1;
+  background-color: #f4f4f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative; /* Ensure the image aligns properly */
+}
+
+.left-image-container {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.register-left-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensure image covers the space */
+}
+
+.register-right {
+  flex: 1;
+  background-color: #fff;
+  padding: 40px 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+h2 {
+  font-size: 1.8rem;
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+form {
+  width: 100%;
+  max-width: 400px; /* Limit the form width */
+  margin: 0 auto; /* Center the form */
+}
+
+input,
+select {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  box-sizing: border-box; /* Ensure padding is included in the width */
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.register-btn {
+  background-color: #007bff;
+  border-radius: 30px;
+  color: white;
+  padding: 12px 0;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.register-btn:hover {
+  background-color: #0056b3;
+}
+
+.login-prompt {
+  margin-top: 20px;
+  font-size: 1rem;
+}
+
+.login-prompt a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.login-prompt a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .register-container {
+    flex-direction: column;
+  }
+
+  .register-left,
+  .register-right {
+    flex: none;
+    width: 100%;
+  }
+
+  .register-right {
+    padding: 30px;
+  }
+
+  .register-left {
+    background-color: #fff;
+  }
+
+  .left-image-container {
+    width: 100%;
+    height: 300px; /* Adjust height for smaller screens */
+  }
+
+  .register-left-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}

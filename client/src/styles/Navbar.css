@@ -1,0 +1,161 @@
+/* Navbar styling */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  padding: 10px 50px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-logo {
+  font-family: "Segoe UI", sans-serif;
+  font-weight: bold;
+  font-size: 1.8rem;
+  color: #333;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+}
+
+.brand-name {
+  font-size: 1.8rem; /* Match the size of the Home icon */
+  font-weight: 700;
+  color: #333; /* Text color for WriteHub */
+  margin-left: 10px; /* Add space between the icon and the text */
+  text-transform: none; /* Keep the text in normal case */
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* Align items to the right */
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.username {
+  cursor: pointer;
+  font-weight: 600;
+  margin-left: 10px; /* Gap between username and Create Blog */
+  color: #2e3a59; /* Blue color similar to buttons */
+  display: flex;
+  align-items: center;
+  text-transform: uppercase; /* Make the username uppercase */
+  font-size: 1.1rem;
+}
+
+.username:hover {
+  color: #ff4081; /* Hover color for username */
+}
+
+.username i {
+  margin-left: 5px;
+}
+
+/* Dropdown Menu */
+.dropdown {
+  position: absolute;
+
+  top: 50px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  min-width: 150px;
+  z-index: 100;
+}
+
+.dropdown-item {
+  display: block;
+  padding: 10px;
+  text-decoration: none;
+  color: #333;
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: none;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.dropdown-item:hover {
+  background-color: #f0f0f0;
+}
+
+/* Create Blog Button */
+.create-post-link {
+  background-color: #ff4081;
+  padding: 9px 10px; /* Increased padding for a more prominent button */
+  border-radius: 20px;
+  color: white;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.create-post-link:hover {
+  background-color: #e5397b;
+}
+
+/* Authentication Buttons - Login and Signup */
+.auth-links {
+  display: flex;
+  align-items: center;
+}
+
+.login-button {
+  background-color: #2e3a59;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 600;
+  margin-right: 10px;
+}
+
+.signup-button {
+  color: #2e3a59;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 10px;
+  }
+
+  .navbar-left {
+    flex-direction: column;
+  }
+
+  .create-post-link {
+    padding: 12px 25px; /* Adjusted padding for smaller screens */
+    font-size: 1.1rem; /* Increased font size for better visibility */
+    width: 100%; /* Make the button stretch to full width on mobile */
+    text-align: center;
+  }
+
+  .navbar-right {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .user-menu {
+    margin-top: 10px;
+  }
+
+  .create-post-link {
+    margin-bottom: 10px;
+  }
+}

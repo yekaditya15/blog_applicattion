@@ -10,7 +10,8 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import CreatePost from "./pages/CreatePost";
 import BlogDetail from "./pages/BlogDetail";
-import EditPost from "./pages/EditPost"; // Import the EditPost component
+import EditPost from "./pages/EditPost";
+import UserProfile from "./components/UserProfile"; // Import UserProfile component
 import Navbar from "./components/Navbar";
 
 const App = () => {
@@ -69,8 +70,13 @@ const App = () => {
           element={<BlogDetail isAuthenticated={isAuthenticated} />}
         />
         <Route
-          path="/editBlog/:id" // Add route for editing blog
+          path="/editBlog/:id"
           element={isAuthenticated ? <EditPost /> : <Navigate to="/login" />}
+        />
+        {/* Profile route */}
+        <Route
+          path="/profile"
+          element={isAuthenticated ? <UserProfile /> : <Navigate to="/login" />}
         />
       </Routes>
     </Router>
