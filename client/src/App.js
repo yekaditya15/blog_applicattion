@@ -6,6 +6,9 @@ import {
   Navigate,
 } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -13,7 +16,6 @@ import CreatePost from "./pages/CreatePost";
 import BlogDetail from "./pages/BlogDetail";
 import EditPost from "./pages/EditPost";
 import UserProfile from "./components/UserProfile";
-import Navbar from "./components/Navbar";
 
 const App = () => {
   const { isAuthenticated } = useSelector((state) => state.auth);
@@ -45,6 +47,18 @@ const App = () => {
           element={isAuthenticated ? <UserProfile /> : <Navigate to="/login" />}
         />
       </Routes>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </Router>
   );
 };

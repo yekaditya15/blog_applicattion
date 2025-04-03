@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import "../styles/UserProfile.css";
 import BlogCard from "../components/BlogCard";
 import Spinner from "../components/Spinner";
+import { showToast } from "../utils/toast";
 
 const UserProfile = () => {
   const [user, setUser] = useState(null);

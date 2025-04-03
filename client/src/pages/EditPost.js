@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { updateBlog } from "../redux/slices/blogSlice";
+import { updateBlog, deleteBlog } from "../redux/slices/blogSlice";
 import axios from "axios";
 import "../styles/CreatePost.css";
 import Spinner from "../components/Spinner";
+import { showToast } from "../utils/toast";
 
 const EditPost = () => {
   const { id } = useParams();
@@ -40,26 +41,34 @@ const EditPost = () => {
     fetchBlog();
   }, [id]);
 
-  const handleSubmit = async (e) => {
+  const handleUpdatePost = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
-
     try {
       await dispatch(
         updateBlog({
-          blogId: id,
+          id,
           title,
           textBody,
           topic,
           image,
         })
       ).unwrap();
+      showToast.success("Blog updated successfully!");
       navigate(`/blog/${id}`);
-    } catch (err) {
-      setError("Failed to update blog");
-      setLoading(false);
-      console.error(err);
+    } catch (error) {
+      showToast.error(error.message || "Failed to update blog");
+    }
+  };
+
+  const handleDelete = async () => {
+    if (window.confirm("Are you sure you want to delete this blog?")) {
+      try {
+        await dispatch(deleteBlog(id)).unwrap();
+        showToast.success("Blog deleted successfully!");
+        navigate("/");
+      } catch (error) {
+        showToast.error(error.message || "Failed to delete blog");
+      }
     }
   };
 
@@ -74,7 +83,7 @@ const EditPost = () => {
         <p>Make changes to your story and share your updated perspective</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="create-post-form">
+      <form onSubmit={handleUpdatePost} className="create-post-form">
         <div className="form-group">
           <label htmlFor="title">Title</label>
           <input
@@ -138,6 +147,9 @@ const EditPost = () => {
           {loading ? "Updating..." : "Update Story"}
         </button>
       </form>
+      <button onClick={handleDelete} className="delete-button">
+        Delete Blog
+      </button>
     </div>
   );
 };

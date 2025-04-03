@@ -3,6 +3,7 @@ import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import "../styles/BlogDetail.css";
 import Spinner from "../components/Spinner";
+import { showToast } from "../utils/toast";
 // Import icons
 import { FaEdit, FaTrash, FaPaperPlane } from "react-icons/fa";
 
@@ -54,7 +55,7 @@ const BlogDetail = () => {
 
     const token = localStorage.getItem("authToken");
     if (!token) {
-      alert("You must be logged in to comment");
+      showToast.error("Please login to comment");
       navigate("/login");
       return;
     }
@@ -68,30 +69,24 @@ const BlogDetail = () => {
 
       setComments((prevComments) => [...prevComments, response.data]);
       setNewComment("");
+      showToast.success("Comment added successfully");
     } catch (err) {
-      console.error("Error posting comment:", err);
-      alert("Failed to post the comment");
+      showToast.error(err.response?.data?.message || "Failed to post comment");
     }
   };
 
   const handleDelete = async () => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this blog?"
-    );
-    if (confirmDelete) {
+    if (window.confirm("Are you sure you want to delete this blog?")) {
       try {
         const token = localStorage.getItem("authToken");
         await axios.delete(
           `https://blog-applicattionserver.vercel.app/api/blog/deleteBlog/${id}`,
-          {
-            headers: { "x-auth-token": token },
-          }
+          { headers: { "x-auth-token": token } }
         );
-        alert("Blog deleted successfully");
+        showToast.success("Blog deleted successfully");
         navigate("/");
       } catch (err) {
-        console.error("Error deleting blog:", err);
-        alert("Failed to delete the blog");
+        showToast.error(err.response?.data?.message || "Failed to delete blog");
       }
     }
   };

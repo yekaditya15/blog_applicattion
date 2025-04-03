@@ -13,6 +13,7 @@ import {
   FaHeart,
 } from "react-icons/fa";
 import "../styles/Login.css";
+import { showToast } from "../utils/toast";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -49,7 +50,13 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(loginUser(formData));
+    try {
+      await dispatch(loginUser(formData)).unwrap();
+      showToast.success("Login successful!");
+      navigate("/");
+    } catch (error) {
+      showToast.error(error.message || "Login failed");
+    }
   };
 
   return (

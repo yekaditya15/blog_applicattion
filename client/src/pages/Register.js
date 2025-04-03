@@ -12,6 +12,7 @@ import {
   FaVenusMars,
 } from "react-icons/fa";
 import "../styles/Register.css";
+import { showToast } from "../utils/toast";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -55,28 +56,34 @@ const Register = () => {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      setPasswordError("Passwords do not match");
+      showToast.error("Passwords do not match");
       return;
     }
 
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordRegex.test(formData.password)) {
-      setPasswordError(
+      showToast.error(
         "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character"
       );
       return;
     }
 
-    dispatch(
-      registerUser({
-        name: formData.name,
-        email: formData.email,
-        username: formData.username,
-        password: formData.password,
-        gender: formData.gender,
-      })
-    );
+    try {
+      await dispatch(
+        registerUser({
+          name: formData.name,
+          email: formData.email,
+          username: formData.username,
+          password: formData.password,
+          gender: formData.gender,
+        })
+      ).unwrap();
+      showToast.success("Registration successful!");
+      navigate("/");
+    } catch (error) {
+      showToast.error(error.message || "Registration failed");
+    }
   };
 
   return (

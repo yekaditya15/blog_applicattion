@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../styles/CreatePost.css";
 import Spinner from "../components/Spinner";
+import { showToast } from "../utils/toast";
 
 const CreatePost = () => {
   const navigate = useNavigate();
@@ -17,24 +18,25 @@ const CreatePost = () => {
 
   const handleCreatePost = async (e) => {
     e.preventDefault();
-    setLoading(true); // Start loading
-    setError(""); // Reset error message
+    setLoading(true);
+    setError("");
 
     const token = localStorage.getItem("authToken");
 
     try {
-      const response = await axios.post(
+      await axios.post(
         "https://blog-applicattionserver.vercel.app/api/blog/createBlog",
-        { title, textBody, topic, image }, // Sending topic along with other post details
+        { title, textBody, topic, image },
         {
           headers: { "x-auth-token": token },
         }
       );
-      setLoading(false); // Stop loading
-      navigate("/"); // Redirect to home page after successful creation
+      setLoading(false);
+      showToast.success("Blog created successfully");
+      navigate("/");
     } catch (err) {
-      setLoading(false); // Stop loading
-      setError("Failed to create post. Please try again."); // Show error message
+      setLoading(false);
+      showToast.error(err.response?.data?.message || "Failed to create blog");
       console.error(err);
     }
   };

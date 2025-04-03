@@ -4,6 +4,7 @@ import { FaHome, FaCaretDown, FaBars, FaTimes } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../redux/slices/authSlice";
 import "../styles/Navbar.css";
+import { showToast } from "../utils/toast";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -13,6 +14,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     dispatch(logout());
+    showToast.success("Logged out successfully");
     setIsDropdownOpen(false);
     setIsMobileMenuOpen(false);
   };
