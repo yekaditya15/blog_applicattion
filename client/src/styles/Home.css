@@ -93,7 +93,7 @@
 }
 
 .blog-title {
-  font-size: 1.2rem; /* Increased from 0.5rem */
+  font-size: 1.5rem !important; /* Changed from 1rem to match UserProfile */
   font-weight: 600;
   color: #333;
   margin-bottom: 8px;
@@ -305,7 +305,7 @@
   }
 
   .blog-title {
-    font-size: 0.95rem;
+    font-size: 0.75rem; /* Changed from 0.85rem */
   }
 
   .blog-excerpt {
@@ -366,7 +366,7 @@
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .blog-title {
-    font-size: 0.9rem;
+    font-size: 0.8rem; /* Changed from 0.9rem */
     margin-bottom: 6px;
   }
 

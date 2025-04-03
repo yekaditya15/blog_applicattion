@@ -299,8 +299,8 @@
 
 /* Create Blog Button */
 .create-post-link {
-  background-color: #ff4081;
-  padding: 9px 10px; /* Increased padding for a more prominent button */
+  background-color: #2e3a59; /* Changed from #ff4081 to match signup button color */
+  padding: 9px 10px;
   border-radius: 20px;
   color: white;
   text-decoration: none;
@@ -309,7 +309,7 @@
 }
 
 .create-post-link:hover {
-  background-color: #e5397b;
+  background-color: #1f2942; /* Darker shade of #2e3a59 for hover state */
 }
 
 /* Authentication Buttons - Login and Signup */
