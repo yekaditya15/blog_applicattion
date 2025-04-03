@@ -7,7 +7,7 @@ import "../styles/Home.css";
 const Home = ({ isAuthenticated }) => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState("Home"); // For topic filtering
+  const [selectedCategory, setSelectedCategory] = useState("Home");
   const [categories] = useState([
     "Home",
     "Politics",
@@ -16,7 +16,17 @@ const Home = ({ isAuthenticated }) => {
     "Health",
     "Education",
     "Entertainment",
-  ]); // Categories for filtering
+  ]);
+
+  // Fisher-Yates shuffle algorithm
+  const shuffleArray = (array) => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -25,7 +35,9 @@ const Home = ({ isAuthenticated }) => {
         const response = await axios.get(
           "https://blog-applicattionserver.vercel.app/api/blog/readAllBlogs"
         );
-        setBlogs(response.data);
+        // Shuffle the blogs before setting them
+        const shuffledBlogs = shuffleArray(response.data);
+        setBlogs(shuffledBlogs);
       } catch (err) {
         console.error(err);
       } finally {
@@ -41,17 +53,15 @@ const Home = ({ isAuthenticated }) => {
   // Filter blogs based on the selected category
   const filteredBlogs =
     selectedCategory === "Home"
-      ? blogs // Show all blogs if Home is selected
+      ? blogs
       : blogs.filter((blog) => blog.topic === selectedCategory);
 
-  // Function to change category selection
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
   };
 
   return (
     <div className="home-container">
-      {/* Category Navigation */}
       <div className="category-nav">
         {categories.map((category) => (
           <div
@@ -66,7 +76,6 @@ const Home = ({ isAuthenticated }) => {
         ))}
       </div>
 
-      {/* Blogs Display */}
       <div className="blogs-container">
         {filteredBlogs.length > 0 ? (
           filteredBlogs.map((blog) => <BlogCard key={blog._id} blog={blog} />)
