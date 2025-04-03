@@ -41,30 +41,43 @@ const Login = () => {
       </div>
 
       <div className="login-right">
-        <h2>Sign in to WriteHub</h2>
-        {error && <p className="error-message">{error}</p>}
+        <h2>Welcome Back!</h2>
+        <p className="login-subtitle">Please enter your details to sign in</p>
+
+        {error && <div className="error-message">{error}</div>}
+
         <form onSubmit={handleLogin}>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email Address"
-            required
-            disabled={loading}
-          />
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            required
-            disabled={loading}
-          />
+          <div className="input-group">
+            <label htmlFor="email">Email Address</label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              required
+              disabled={loading}
+            />
+          </div>
+
+          <div className="input-group">
+            <label htmlFor="password">Password</label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              required
+              disabled={loading}
+            />
+          </div>
 
           <button type="submit" className="login-btn" disabled={loading}>
-            {loading ? "Logging in..." : "Login"}
+            {loading ? "Signing in..." : "Sign In"}
           </button>
         </form>
+
         <div className="signup-prompt">
           <span>Don't have an account?</span>
           <a href="/register">Sign up</a>

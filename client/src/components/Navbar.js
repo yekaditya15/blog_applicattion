@@ -1,53 +1,68 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { FaHome } from "react-icons/fa"; // Home icon import
-import { FaCaretDown } from "react-icons/fa"; // Dropdown icon import
+import { FaHome, FaCaretDown, FaBars, FaTimes } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../redux/slices/authSlice"; // Logout action import
-import "../styles/Navbar.css"; // Make sure the correct CSS is imported
+import { logout } from "../redux/slices/authSlice";
+import "../styles/Navbar.css";
 
 const Navbar = () => {
   const dispatch = useDispatch();
-  const { isAuthenticated, username } = useSelector((state) => state.auth); // Fetch authentication and username from Redux
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State to control dropdown visibility
+  const { isAuthenticated, username } = useSelector((state) => state.auth);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Logout function
   const handleLogout = () => {
-    dispatch(logout()); // Dispatch logout action
-    setIsDropdownOpen(false); // Close dropdown after logout
+    dispatch(logout());
+    setIsDropdownOpen(false);
+    setIsMobileMenuOpen(false);
   };
 
-  // Toggle dropdown menu visibility
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+    if (isDropdownOpen) setIsDropdownOpen(false);
   };
 
   return (
     <nav className="navbar">
       <div className="navbar-left">
-        {/* Home link with Home icon */}
         <Link to="/" className="navbar-logo">
           <FaHome size={24} color="#333" />
           <span className="brand-name">WriteHub</span>
         </Link>
       </div>
 
-      <div className="navbar-right">
-        {/* Display links if the user is authenticated */}
+      <div className="mobile-menu-icon" onClick={toggleMobileMenu}>
+        {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
+      </div>
+
+      <div className={`navbar-right ${isMobileMenuOpen ? "show" : ""}`}>
         {isAuthenticated ? (
           <>
-            {/* Link to create blog */}
-            <Link to="/create" className="create-post-link">
+            <Link
+              to="/create"
+              className="create-post-link"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
               Create Post
             </Link>
-            {/* Username with dropdown */}
             <div className="user-menu">
               <span className="username" onClick={toggleDropdown}>
                 {username} <FaCaretDown size={12} />
               </span>
               {isDropdownOpen && (
                 <div className="dropdown">
-                  <Link to="/profile" className="dropdown-item">
+                  <Link
+                    to="/profile"
+                    className="dropdown-item"
+                    onClick={() => {
+                      setIsDropdownOpen(false);
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
                     Profile
                   </Link>
                   <button onClick={handleLogout} className="dropdown-item">
@@ -58,12 +73,19 @@ const Navbar = () => {
             </div>
           </>
         ) : (
-          // Display login and register links if not authenticated
           <div className="auth-links">
-            <Link to="/login" className="login-button">
+            <Link
+              to="/login"
+              className="login-button"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
               Log in
             </Link>
-            <Link to="/register" className="signup-button">
+            <Link
+              to="/register"
+              className="signup-button"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
               Sign up
             </Link>
           </div>

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import "../styles//BlogDetail.css";
+import Spinner from "../components/Spinner";
+
 const BlogDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -88,7 +90,7 @@ const BlogDetail = () => {
   };
 
   // Loading state handling
-  if (loading) return <div>Loading blog details...</div>;
+  if (loading) return <Spinner />;
 
   return (
     <div className="blog-detail-container">

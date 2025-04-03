@@ -1,4 +1,4 @@
-/* Navbar styling */
+/* Base Navbar styling */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -6,6 +6,9 @@
   background-color: white;
   padding: 10px 50px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 .navbar-logo {
@@ -23,56 +26,258 @@
   align-items: center;
 }
 
+/* Brand Name Styling */
 .brand-name {
-  font-size: 1.8rem; /* Match the size of the Home icon */
-  font-weight: 700;
-  color: #333; /* Text color for WriteHub */
-  margin-left: 10px; /* Add space between the icon and the text */
-  text-transform: none; /* Keep the text in normal case */
+  font-size: 1.8rem;
+  font-weight: 800; /* Increased font weight */
+  color: #333;
+  margin-left: 10px;
+  text-transform: uppercase; /* Always uppercase */
+  letter-spacing: 1px; /* Better letter spacing */
 }
 
 .navbar-right {
   display: flex;
   align-items: center;
-  justify-content: flex-end; /* Align items to the right */
+  gap: 20px;
 }
 
+/* Mobile Menu Icon */
+.mobile-menu-icon {
+  display: none;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.mobile-menu-icon svg {
+  width: 24px;
+  height: 24px;
+  color: #333;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 10px 20px;
+  }
+
+  .mobile-menu-icon {
+    display: block;
+  }
+
+  .brand-name {
+    font-size: 1.4rem;
+  }
+
+  .navbar-right {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: white;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: none;
+    gap: 15px;
+  }
+
+  .navbar-right.show {
+    display: flex;
+  }
+
+  .create-post-link {
+    width: 100%;
+    text-align: center;
+    padding: 12px;
+    margin: 5px 0;
+  }
+
+  .auth-links {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .login-button,
+  .signup-button {
+    width: 100%;
+    text-align: center;
+    padding: 12px;
+    margin: 0;
+  }
+
+  /* Username Dropdown Styling */
+  .user-menu {
+    width: 100%;
+  }
+
+  .username {
+    width: 100%;
+    padding: 12px 16px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    justify-content: space-between;
+    font-size: 1rem;
+    border: 1px solid #eaeaea;
+  }
+
+  .dropdown {
+    position: static;
+    box-shadow: none;
+    margin-top: 4px;
+    border: 1px solid #eaeaea;
+    border-radius: 8px;
+    background-color: white;
+  }
+
+  .dropdown-item {
+    padding: 14px 16px;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #eaeaea;
+    text-align: center;
+    font-weight: 500;
+  }
+
+  .dropdown-item:last-child {
+    border-bottom: none;
+  }
+
+  .dropdown-item:hover {
+    background-color: #f8f9fa;
+  }
+}
+
+/* Small Mobile Devices */
+@media (max-width: 480px) {
+  .navbar {
+    padding: 8px 15px;
+  }
+
+  .brand-name {
+    font-size: 1.2rem;
+  }
+
+  .navbar-logo svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .create-post-link,
+  .login-button,
+  .signup-button {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+
+  .dropdown-item {
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Tablet Devices */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .navbar {
+    padding: 12px 30px;
+  }
+
+  .navbar-right {
+    gap: 15px;
+  }
+
+  .create-post-link {
+    padding: 8px 15px;
+  }
+
+  .brand-name {
+    font-size: 1.6rem;
+  }
+}
+
+/* Animation for mobile menu */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.navbar-right.show {
+  animation: slideDown 0.3s ease-out;
+}
+
+/* Username Menu Styling */
 .user-menu {
-  display: flex;
-  align-items: center;
   position: relative;
+  display: inline-block;
 }
 
 .username {
-  cursor: pointer;
-  font-weight: 600;
-  margin-left: 10px; /* Gap between username and Create Blog */
-  color: #2e3a59; /* Blue color similar to buttons */
   display: flex;
   align-items: center;
-  text-transform: uppercase; /* Make the username uppercase */
-  font-size: 1.1rem;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #333;
+  padding: 8px 16px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  text-transform: uppercase; /* Add this line to make username uppercase */
 }
 
 .username:hover {
-  color: #ff4081; /* Hover color for username */
-}
-
-.username i {
-  margin-left: 5px;
+  background-color: #f5f5f5;
 }
 
 /* Dropdown Menu */
 .dropdown {
   position: absolute;
-
-  top: 50px;
+  top: calc(100% + 14px); /* Increased from 5px to 10px for more gap */
+  right: 0;
   background-color: white;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  min-width: 150px;
-  z-index: 100;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  min-width: fit-content;
+  width: 100%;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .user-menu {
+    width: 100%;
+  }
+
+  .username {
+    width: 100%;
+    padding: 12px 16px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    justify-content: space-between;
+    font-size: 1rem;
+    border: 1px solid #eaeaea;
+  }
+
+  .dropdown {
+    position: relative;
+    top: 10px; /* Increased from 5px to 10px for more gap in mobile view */
+    box-shadow: none;
+    border: 1px solid #eaeaea;
+    width: 100%;
+    margin-top: 5px; /* Added additional margin for mobile */
+  }
+
+  .navbar-right {
+    padding-bottom: 20px; /* Add extra padding at bottom for dropdown */
+  }
 }
 
 .dropdown-item {
@@ -127,35 +332,4 @@
   color: #2e3a59;
   font-weight: 600;
   text-decoration: none;
-}
-
-/* Mobile responsiveness */
-@media (max-width: 768px) {
-  .navbar {
-    padding: 10px;
-  }
-
-  .navbar-left {
-    flex-direction: column;
-  }
-
-  .create-post-link {
-    padding: 12px 25px; /* Adjusted padding for smaller screens */
-    font-size: 1.1rem; /* Increased font size for better visibility */
-    width: 100%; /* Make the button stretch to full width on mobile */
-    text-align: center;
-  }
-
-  .navbar-right {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .user-menu {
-    margin-top: 10px;
-  }
-
-  .create-post-link {
-    margin-bottom: 10px;
-  }
 }

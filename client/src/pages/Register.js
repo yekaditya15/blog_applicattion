@@ -36,7 +36,6 @@ const Register = () => {
       [e.target.name]: e.target.value,
     });
 
-    // Clear password error when user types in either password field
     if (e.target.name === "password" || e.target.name === "confirmPassword") {
       setPasswordError("");
     }
@@ -45,13 +44,11 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate passwords match
     if (formData.password !== formData.confirmPassword) {
       setPasswordError("Passwords do not match");
       return;
     }
 
-    // Validate password strength
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordRegex.test(formData.password)) {
@@ -61,7 +58,6 @@ const Register = () => {
       return;
     }
 
-    // Dispatch register action
     dispatch(
       registerUser({
         name: formData.name,
@@ -86,76 +82,102 @@ const Register = () => {
       </div>
 
       <div className="register-right">
-        <h2>Create your account</h2>
-        {error && <p className="error-message">{error}</p>}
-        {passwordError && <p className="error-message">{passwordError}</p>}
+        <h2>Create Account</h2>
+        <p className="register-subtitle">Join our community today</p>
+
+        {error && <div className="error-message">{error}</div>}
+        {passwordError && <div className="error-message">{passwordError}</div>}
 
         <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="Full Name"
-            required
-            disabled={loading}
-          />
+          <div className="input-group">
+            <label htmlFor="name">Full Name</label>
+            <input
+              id="name"
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="Enter your full name"
+              required
+              disabled={loading}
+            />
+          </div>
 
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="Email Address"
-            required
-            disabled={loading}
-          />
+          <div className="input-group">
+            <label htmlFor="email">Email Address</label>
+            <input
+              id="email"
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Enter your email"
+              required
+              disabled={loading}
+            />
+          </div>
 
-          <input
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            placeholder="Username"
-            required
-            disabled={loading}
-          />
+          <div className="input-group">
+            <label htmlFor="username">Username</label>
+            <input
+              id="username"
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              placeholder="Choose a username"
+              required
+              disabled={loading}
+            />
+          </div>
 
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="Password"
-            required
-            disabled={loading}
-          />
+          <div className="input-group">
+            <label htmlFor="password">Password</label>
+            <input
+              id="password"
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Create a password"
+              required
+              disabled={loading}
+            />
+          </div>
 
-          <input
-            type="password"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            placeholder="Confirm Password"
-            required
-            disabled={loading}
-          />
+          <div className="input-group">
+            <label htmlFor="confirmPassword">Confirm Password</label>
+            <input
+              id="confirmPassword"
+              type="password"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              placeholder="Confirm your password"
+              required
+              disabled={loading}
+            />
+          </div>
 
-          <select
-            name="gender"
-            value={formData.gender}
-            onChange={handleChange}
-            required
-            disabled={loading}
-          >
-            <option value="">Select Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
-          </select>
+          <div className="input-group">
+            <label htmlFor="gender">Gender</label>
+            <select
+              id="gender"
+              name="gender"
+              value={formData.gender}
+              onChange={handleChange}
+              required
+              disabled={loading}
+            >
+              <option value="">Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
 
           <button type="submit" className="register-btn" disabled={loading}>
-            {loading ? "Creating Account..." : "Register"}
+            {loading ? "Creating Account..." : "Create Account"}
           </button>
         </form>
 
