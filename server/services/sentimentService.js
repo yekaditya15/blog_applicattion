@@ -14,34 +14,55 @@ export const analyzeSentiment = async (text) => {
     const sentiments = await Promise.all(
       chunks.map(async (chunk) => {
         const output = await client.textClassification({
-          // Using a more robust model for longer texts
-          model: "nlptown/bert-base-multilingual-uncased-sentiment",
+          // Using a more accurate model for sentiment analysis
+          model: "finiteautomata/bertweet-base-sentiment-analysis",
           inputs: chunk,
-          provider: "hf-inference",
         });
         return output[0];
       })
     );
 
-    // Aggregate results
-    const averageScore =
-      sentiments.reduce((acc, curr) => {
-        // Convert 1-5 star rating to sentiment
-        const score = parseInt(curr.label[0]);
-        return acc + score;
-      }, 0) / sentiments.length;
+    // Calculate weighted scores for each sentiment
+    let scoreMap = {
+      POS: 0,
+      NEG: 0,
+      NEU: 0,
+    };
 
-    // Convert average score to sentiment label
+    sentiments.forEach((sentiment) => {
+      const { label, score } = sentiment;
+      scoreMap[label] += score;
+    });
+
+    // Normalize scores by number of chunks
+    Object.keys(scoreMap).forEach((key) => {
+      scoreMap[key] = scoreMap[key] / sentiments.length;
+    });
+
+    // Determine final sentiment based on highest weighted score
     let finalSentiment;
-    if (averageScore >= 4) {
+    if (scoreMap.POS > scoreMap.NEG && scoreMap.POS > scoreMap.NEU) {
       finalSentiment = "POSITIVE";
-    } else if (averageScore <= 2) {
+    } else if (scoreMap.NEG > scoreMap.POS && scoreMap.NEG > scoreMap.NEU) {
       finalSentiment = "NEGATIVE";
     } else {
       finalSentiment = "NEUTRAL";
     }
 
-    return [{ label: finalSentiment }];
+    // Add confidence score
+    const confidence = Math.max(scoreMap.POS, scoreMap.NEG, scoreMap.NEU);
+
+    // Only return strong sentiments if confidence is high enough
+    if (confidence < 0.6) {
+      finalSentiment = "NEUTRAL";
+    }
+
+    return [
+      {
+        label: finalSentiment,
+        confidence: confidence,
+      },
+    ];
   } catch (error) {
     console.error("Error during sentiment analysis:", error);
     throw new Error("Sentiment analysis failed");

@@ -5,6 +5,12 @@ const BlogCard = ({ blog }) => {
   const defaultImage =
     "https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=1000&auto=format&fit=crop";
 
+  const truncateText = (text, maxLength) => {
+    if (!text) return "";
+    if (text.length <= maxLength) return text;
+    return text.slice(0, maxLength).trim() + "...";
+  };
+
   return (
     <div className="blog-card">
       <div className="blog-card-content">
@@ -12,11 +18,9 @@ const BlogCard = ({ blog }) => {
           <div className="blog-author">
             Written by {blog.userID?.username || "Anonymous"}
           </div>
-          <h3 className="blog-title">{blog.title.toUpperCase()}</h3>
-          <p className="blog-excerpt">
-            {blog.textBody?.slice(0, 150)}
-            {blog.textBody?.length > 150 ? "..." : ""}
-          </p>
+          <h3 className="blog-title">
+            {truncateText(blog.title.toUpperCase(), 50)}
+          </h3>
           <div className="blog-footer">
             <span className="blog-date">
               {new Date(blog.creationDateTime).toLocaleDateString()}

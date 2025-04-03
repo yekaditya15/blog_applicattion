@@ -126,7 +126,13 @@ const UserProfile = () => {
         ) : (
           <div className="blogs-grid">
             {userBlogs.map((blog) => (
-              <BlogCard key={blog._id} blog={blog} />
+              <BlogCard
+                key={blog._id}
+                blog={{
+                  ...blog,
+                  title: blog.title.toUpperCase(), // Remove the title truncation
+                }}
+              />
             ))}
           </div>
         )}

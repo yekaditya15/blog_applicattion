@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
-import "../styles//BlogDetail.css";
+import "../styles/BlogDetail.css";
 import Spinner from "../components/Spinner";
+// Import icons
+import { FaEdit, FaTrash, FaPaperPlane } from "react-icons/fa";
 
 const BlogDetail = () => {
   const { id } = useParams();
@@ -10,8 +12,16 @@ const BlogDetail = () => {
   const [blog, setBlog] = useState(null);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
-  const [loading, setLoading] = useState(true); // Track loading state
-  const [isOwner, setIsOwner] = useState(false); // To track if the user is the owner of the blog
+  const [loading, setLoading] = useState(true);
+  const [isOwner, setIsOwner] = useState(false);
+
+  const defaultAvatars = {
+    Male: "https://firebasestorage.googleapis.com/v0/b/portfolio-c5c0a.appspot.com/o/male.jpg?alt=media&token=a497fca7-8a82-47fd-ab59-71fbbd99df96",
+    Female:
+      "https://firebasestorage.googleapis.com/v0/b/portfolio-c5c0a.appspot.com/o/female.jpg?alt=media&token=db327b94-dc57-4e2f-b785-bde33a4764ce",
+    Other:
+      "https://firebasestorage.googleapis.com/v0/b/portfolio-c5c0a.appspot.com/o/other.jpg?alt=media&token=4a5d916a-14c5-4fbe-b417-4dd6cfa524e2",
+  };
 
   useEffect(() => {
     const fetchBlog = async () => {
@@ -20,20 +30,19 @@ const BlogDetail = () => {
           `https://blog-applicattionserver.vercel.app/api/blog/readBlog/${id}`
         );
         setBlog(response.data.blog);
-        setComments(response.data.comments); // Set the comments
+        setComments(response.data.comments);
 
-        // Check if the logged-in user is the owner
         const token = localStorage.getItem("authToken");
         if (token) {
-          const decodedToken = JSON.parse(atob(token.split(".")[1])); // Decode the JWT token
-          const userId = decodedToken.userID; // Extract userID from the token
-          setIsOwner(response.data.blog.userID._id === userId); // Check if the user is the owner
+          const decodedToken = JSON.parse(atob(token.split(".")[1]));
+          const userId = decodedToken.userID;
+          setIsOwner(response.data.blog.userID._id === userId);
         }
       } catch (err) {
         console.error("Error fetching blog:", err);
         alert("Failed to fetch blog details.");
       } finally {
-        setLoading(false); // Stop loading after fetching
+        setLoading(false);
       }
     };
 
@@ -43,9 +52,11 @@ const BlogDetail = () => {
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
 
-    const token = localStorage.getItem("authToken"); // Get the auth token
+    const token = localStorage.getItem("authToken");
     if (!token) {
-      return alert("You must be logged in to comment");
+      alert("You must be logged in to comment");
+      navigate("/login");
+      return;
     }
 
     try {
@@ -55,8 +66,8 @@ const BlogDetail = () => {
         { headers: { "x-auth-token": token } }
       );
 
-      setComments((prevComments) => [...prevComments, response.data]); // Add new comment to the list
-      setNewComment(""); // Clear comment input field
+      setComments((prevComments) => [...prevComments, response.data]);
+      setNewComment("");
     } catch (err) {
       console.error("Error posting comment:", err);
       alert("Failed to post the comment");
@@ -77,7 +88,7 @@ const BlogDetail = () => {
           }
         );
         alert("Blog deleted successfully");
-        navigate("/"); // Redirect to home page
+        navigate("/");
       } catch (err) {
         console.error("Error deleting blog:", err);
         alert("Failed to delete the blog");
@@ -86,60 +97,121 @@ const BlogDetail = () => {
   };
 
   const handleEdit = () => {
-    navigate(`/editBlog/${id}`); // Redirect to the edit page with blog ID
+    navigate(`/editBlog/${id}`);
   };
 
-  // Loading state handling
   if (loading) return <Spinner />;
+  if (!blog) return <div>Blog not found</div>;
+
+  const getSentimentColor = (sentiment) => {
+    switch (sentiment?.toUpperCase()) {
+      case "POSITIVE":
+        return "#28a745";
+      case "NEGATIVE":
+        return "#dc3545";
+      case "NEUTRAL":
+        return "#ffc107";
+      default:
+        return "#6c757d";
+    }
+  };
 
   return (
     <div className="blog-detail-container">
-      <h2 className="blog-title">{blog.title}</h2>
-      <p className="blog-body">{blog.textBody}</p>
-      {blog.image && <img className="blog-image" src={blog.image} alt="Blog" />}
-      <div className="blog-meta">
-        <span>Topic: {blog.topic}</span>
-        <span>Author: {blog.userID.username}</span>
-        <span className="date">
-          Created On: {new Date(blog.creationDateTime).toLocaleDateString()}
-        </span>
-      </div>
-      <p className="blog-sentiment">
-        <strong>Sentiment: </strong> {blog.sentiment || "Not analyzed"}
-      </p>
-
-      {/* Edit and Delete buttons if the user is the owner */}
-      {isOwner && (
-        <div className="blog-action-buttons">
-          <button onClick={handleEdit}>Edit</button>
-          <button onClick={handleDelete}>Delete</button>
+      <article className="article-content">
+        <h1 className="blog-title">{blog.title}</h1>
+        <div className="blog-meta">
+          <span className="author">By {blog.userID.username}</span>
+          <span className="date">
+            {new Date(blog.creationDateTime).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </span>
+          <span className="topic">Topic: {blog.topic}</span>
         </div>
-      )}
 
-      <div className="comment-section">
-        <h3>Comments</h3>
-        {comments.length === 0 ? (
-          <p>No comments yet. Be the first to comment!</p>
-        ) : (
-          <ul className="comment-list">
-            {comments.map((comment) => (
-              <li key={comment._id} className="comment-item">
-                <strong>{comment.userID.username}:</strong> {comment.text}
-              </li>
-            ))}
-          </ul>
+        {isOwner && (
+          <div className="blog-actions">
+            <button className="edit-btn" onClick={handleEdit}>
+              <FaEdit className="action-icon" /> Edit
+            </button>
+            <button className="delete-btn" onClick={handleDelete}>
+              <FaTrash className="action-icon" /> Delete
+            </button>
+          </div>
         )}
 
-        <form className="comment-form" onSubmit={handleCommentSubmit}>
-          <textarea
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-            placeholder="Add a comment"
-            required
-          />
-          <button type="submit">Post Comment</button>
-        </form>
+        <p className="content-paragraph">{blog.textBody}</p>
+
+        {blog.image && (
+          <img className="blog-image" src={blog.image} alt="Blog" />
+        )}
+
+        <p
+          className="blog-sentiment"
+          style={{ color: getSentimentColor(blog.sentiment) }}
+        >
+          <strong>Sentiment: </strong>
+          {blog.sentiment
+            ? blog.sentiment.charAt(0).toUpperCase() +
+              blog.sentiment.slice(1).toLowerCase()
+            : "Not analyzed"}
+        </p>
+      </article>
+
+      <div className="discussion-divider">
+        <span>Discussion</span>
       </div>
+
+      <section className="comments-section">
+        <h3>Comments ({comments.length})</h3>
+
+        {comments.length === 0 ? (
+          <p className="no-comments">Be the first to share your thoughts!</p>
+        ) : (
+          <div className="comments-list">
+            {comments.map((comment) => (
+              <div key={comment._id} className="comment-card">
+                <div className="comment-user-avatar">
+                  <img
+                    src={
+                      defaultAvatars[comment.userID.gender] ||
+                      defaultAvatars.Other
+                    }
+                    alt="User Avatar"
+                  />
+                </div>
+                <div className="comment-content">
+                  <span className="comment-author">
+                    {comment.userID.username}:
+                  </span>
+                  <span className="comment-text">
+                    {comment.text.charAt(0).toUpperCase() +
+                      comment.text.slice(1)}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="comment-form-section">
+          <form onSubmit={handleCommentSubmit} className="comment-form">
+            <textarea
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder="Write a comment..."
+              required
+              aria-label="Comment text"
+            />
+            <button type="submit" aria-label="Post comment">
+              <FaPaperPlane className="send-icon" /> Post
+            </button>
+          </form>
+        </div>
+      </section>
     </div>
   );
 };
