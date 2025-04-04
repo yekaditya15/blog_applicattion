@@ -3,12 +3,12 @@ import mongoose from "mongoose";
 const commentSchema = new mongoose.Schema({
   userID: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User", // Reference to the User model
+    ref: "User",
     required: true,
   },
   blogID: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Blog", // Reference to the Blog model
+    ref: "Blog",
     required: true,
   },
   text: {
@@ -18,6 +18,27 @@ const commentSchema = new mongoose.Schema({
   creationDateTime: {
     type: Date,
     default: Date.now,
+  },
+  parentCommentID: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Comment",
+    default: null,
+  },
+  replies: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
+  likes: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
+  likeCount: {
+    type: Number,
+    default: 0,
   },
 });
 

@@ -5,7 +5,14 @@ import "../styles/BlogDetail.css";
 import Spinner from "../components/Spinner";
 import { showToast } from "../utils/toast";
 // Import icons
-import { FaEdit, FaTrash, FaPaperPlane } from "react-icons/fa";
+import {
+  FaEdit,
+  FaTrash,
+  FaPaperPlane,
+  FaReply,
+  FaHeart,
+  FaRegHeart,
+} from "react-icons/fa";
 
 const BlogDetail = () => {
   const { id } = useParams();
@@ -15,6 +22,8 @@ const BlogDetail = () => {
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(true);
   const [isOwner, setIsOwner] = useState(false);
+  // Add this new state for currentUserID
+  const [currentUserID, setCurrentUserID] = useState(null);
 
   const defaultAvatars = {
     Male: "https://firebasestorage.googleapis.com/v0/b/portfolio-c5c0a.appspot.com/o/male.jpg?alt=media&token=a497fca7-8a82-47fd-ab59-71fbbd99df96",
@@ -37,11 +46,12 @@ const BlogDetail = () => {
         if (token) {
           const decodedToken = JSON.parse(atob(token.split(".")[1]));
           const userId = decodedToken.userID;
+          setCurrentUserID(userId); // Set the currentUserID
           setIsOwner(response.data.blog.userID._id === userId);
         }
       } catch (err) {
         console.error("Error fetching blog:", err);
-        alert("Failed to fetch blog details.");
+        showToast.error("Failed to fetch blog details");
       } finally {
         setLoading(false);
       }
@@ -111,6 +121,168 @@ const BlogDetail = () => {
     }
   };
 
+  const handleReply = async (commentId, replyText) => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      showToast.error("Please login to reply");
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        `https://blog-applicattionserver.vercel.app/api/blog/comment/${commentId}/reply`,
+        { text: replyText },
+        { headers: { "x-auth-token": token } }
+      );
+
+      // Update comments state to include the new reply
+      setComments((prevComments) => {
+        return prevComments.map((comment) => {
+          if (comment._id === commentId) {
+            return {
+              ...comment,
+              replies: [...(comment.replies || []), response.data],
+            };
+          }
+          return comment;
+        });
+      });
+
+      showToast.success("Reply added successfully");
+    } catch (err) {
+      showToast.error(err.response?.data?.message || "Failed to add reply");
+    }
+  };
+
+  const handleLike = async (commentId) => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      showToast.error("Please login to like");
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        `https://blog-applicattionserver.vercel.app/api/blog/comment/${commentId}/like`,
+        {},
+        { headers: { "x-auth-token": token } }
+      );
+
+      updateCommentLikes(commentId, response.data.likeCount, true);
+    } catch (err) {
+      showToast.error(err.response?.data?.message || "Failed to like comment");
+    }
+  };
+
+  const handleUnlike = async (commentId) => {
+    const token = localStorage.getItem("authToken");
+    if (!token) return;
+
+    try {
+      const response = await axios.delete(
+        `https://blog-applicattionserver.vercel.app/api/blog/comment/${commentId}/like`,
+        { headers: { "x-auth-token": token } }
+      );
+
+      updateCommentLikes(commentId, response.data.likeCount, false);
+    } catch (err) {
+      showToast.error(
+        err.response?.data?.message || "Failed to unlike comment"
+      );
+    }
+  };
+
+  const updateCommentLikes = (commentId, likeCount, isLiked) => {
+    setComments((prevComments) => {
+      return prevComments.map((comment) => {
+        if (comment._id === commentId) {
+          return {
+            ...comment,
+            likeCount,
+            likes: isLiked
+              ? [...comment.likes, currentUserID]
+              : comment.likes.filter((id) => id !== currentUserID),
+          };
+        }
+        return comment;
+      });
+    });
+  };
+
+  const Comment = ({ comment, onReply, onLike, onUnlike, currentUserID }) => {
+    const [showReplyForm, setShowReplyForm] = useState(false);
+    const [replyText, setReplyText] = useState("");
+
+    const handleReplySubmit = (e) => {
+      e.preventDefault();
+      onReply(comment._id, replyText);
+      setReplyText("");
+      setShowReplyForm(false);
+    };
+
+    const isLiked = comment.likes?.includes(currentUserID);
+
+    return (
+      <div className="comment-card">
+        <div className="comment-user-avatar">
+          <img
+            src={defaultAvatars[comment.userID.gender] || defaultAvatars.Other}
+            alt="User Avatar"
+          />
+        </div>
+        <div className="comment-content">
+          <div className="comment-header">
+            <span className="comment-author">{comment.userID.username}</span>
+            <div className="comment-actions">
+              <button onClick={() => setShowReplyForm(!showReplyForm)}>
+                <FaReply /> Reply
+              </button>
+              <button
+                onClick={() =>
+                  isLiked ? onUnlike(comment._id) : onLike(comment._id)
+                }
+                className={`like-button ${isLiked ? "liked" : ""}`}
+              >
+                {isLiked ? <FaHeart /> : <FaRegHeart />}
+                <span>{comment.likeCount}</span>
+              </button>
+            </div>
+          </div>
+          <p className="comment-text">{comment.text}</p>
+
+          {showReplyForm && (
+            <form onSubmit={handleReplySubmit} className="reply-form">
+              <textarea
+                value={replyText}
+                onChange={(e) => setReplyText(e.target.value)}
+                placeholder="Write a reply..."
+                required
+              />
+              <button type="submit">Reply</button>
+            </form>
+          )}
+
+          {comment.replies && comment.replies.length > 0 && (
+            <div className="replies-section">
+              {comment.replies.map((reply) => (
+                <Comment
+                  key={reply._id}
+                  comment={reply}
+                  onReply={onReply}
+                  onLike={onLike}
+                  onUnlike={onUnlike}
+                  currentUserID={currentUserID}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="blog-detail-container">
       <article className="article-content">
@@ -168,26 +340,14 @@ const BlogDetail = () => {
         ) : (
           <div className="comments-list">
             {comments.map((comment) => (
-              <div key={comment._id} className="comment-card">
-                <div className="comment-user-avatar">
-                  <img
-                    src={
-                      defaultAvatars[comment.userID.gender] ||
-                      defaultAvatars.Other
-                    }
-                    alt="User Avatar"
-                  />
-                </div>
-                <div className="comment-content">
-                  <span className="comment-author">
-                    {comment.userID.username}:
-                  </span>
-                  <span className="comment-text">
-                    {comment.text.charAt(0).toUpperCase() +
-                      comment.text.slice(1)}
-                  </span>
-                </div>
-              </div>
+              <Comment
+                key={comment._id}
+                comment={comment}
+                onReply={handleReply}
+                onLike={handleLike}
+                onUnlike={handleUnlike}
+                currentUserID={currentUserID} // Pass currentUserID as prop
+              />
             ))}
           </div>
         )}

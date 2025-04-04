@@ -6,6 +6,9 @@ import {
   editBlog,
   deleteBlog,
   createComment,
+  createReply,
+  likeComment,
+  unlikeComment,
 } from "../controllers/blogController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 
@@ -19,5 +22,10 @@ router.patch("/editBlog/:blogID", authMiddleware, editBlog);
 router.delete("/deleteBlog/:blogID", authMiddleware, deleteBlog);
 // Comment Routes
 router.post("/comment/:blogID", authMiddleware, createComment); // Route to create a comment
+
+// New routes for comment replies and likes
+router.post("/comment/:commentID/reply", authMiddleware, createReply);
+router.post("/comment/:commentID/like", authMiddleware, likeComment);
+router.delete("/comment/:commentID/like", authMiddleware, unlikeComment);
 
 export default router;

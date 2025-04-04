@@ -133,3 +133,86 @@ export const createComment = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
+
+// Create Reply
+export const createReply = async (req, res) => {
+  const { text } = req.body;
+  const { commentID } = req.params;
+  const userID = req.user.userID;
+
+  try {
+    // Find parent comment
+    const parentComment = await Comment.findById(commentID);
+    if (!parentComment) {
+      return res.status(404).json({ message: "Parent comment not found" });
+    }
+
+    // Create new reply
+    const newReply = new Comment({
+      text,
+      blogID: parentComment.blogID,
+      userID,
+      parentCommentID: commentID,
+    });
+
+    await newReply.save();
+
+    // Update parent comment's replies array
+    parentComment.replies.push(newReply._id);
+    await parentComment.save();
+
+    // Populate user info
+    await newReply.populate("userID");
+
+    res.status(201).json(newReply);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+// Like Comment
+export const likeComment = async (req, res) => {
+  const { commentID } = req.params;
+  const userID = req.user.userID;
+
+  try {
+    const comment = await Comment.findById(commentID);
+    if (!comment) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
+    // Check if user already liked
+    if (comment.likes.includes(userID)) {
+      return res.status(400).json({ message: "Already liked" });
+    }
+
+    comment.likes.push(userID);
+    comment.likeCount = comment.likes.length;
+    await comment.save();
+
+    res.json({ likeCount: comment.likeCount });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+// Unlike Comment
+export const unlikeComment = async (req, res) => {
+  const { commentID } = req.params;
+  const userID = req.user.userID;
+
+  try {
+    const comment = await Comment.findById(commentID);
+    if (!comment) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
+    comment.likes = comment.likes.filter((id) => id.toString() !== userID);
+    comment.likeCount = comment.likes.length;
+    await comment.save();
+
+    res.json({ likeCount: comment.likeCount });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};

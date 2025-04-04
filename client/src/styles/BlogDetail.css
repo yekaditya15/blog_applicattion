@@ -348,3 +348,72 @@ button {
     font-size: 0.9rem;
   }
 }
+
+/* Add these new styles */
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.comment-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.comment-actions button {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.comment-actions button:hover {
+  background: #f0f0f0;
+}
+
+.like-button.liked {
+  color: #e74c3c;
+}
+
+.replies-section {
+  margin-left: 20px;
+  margin-top: 10px;
+  border-left: 2px solid #eee;
+  padding-left: 15px;
+}
+
+.reply-form {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.reply-form textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  resize: vertical;
+  min-height: 60px;
+}
+
+.reply-form button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.reply-form button:hover {
+  background: #0056b3;
+}
