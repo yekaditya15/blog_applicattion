@@ -100,10 +100,19 @@ export const readBlogById = async (req, res) => {
       return res.status(404).json({ message: "Blog not found" });
     }
 
-    // Fetch comments for the blog
-    const comments = await Comment.find({ blogID: req.params.blogID }).populate(
-      "userID"
-    );
+    // Fetch comments for the blog and populate both userID and replies
+    const comments = await Comment.find({
+      blogID: req.params.blogID,
+      parentCommentID: null,
+    })
+      .populate("userID")
+      .populate({
+        path: "replies",
+        populate: {
+          path: "userID",
+          model: "User",
+        },
+      });
 
     // Return the blog with comments
     res.json({ blog, comments });
@@ -161,7 +170,7 @@ export const createReply = async (req, res) => {
     parentComment.replies.push(newReply._id);
     await parentComment.save();
 
-    // Populate user info
+    // Populate user info before sending response
     await newReply.populate("userID");
 
     res.status(201).json(newReply);

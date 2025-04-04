@@ -214,6 +214,7 @@ const BlogDetail = () => {
   const Comment = ({ comment, onReply, onLike, onUnlike, currentUserID }) => {
     const [showReplyForm, setShowReplyForm] = useState(false);
     const [replyText, setReplyText] = useState("");
+    const [showReplies, setShowReplies] = useState(false);
 
     const handleReplySubmit = (e) => {
       e.preventDefault();
@@ -223,34 +224,55 @@ const BlogDetail = () => {
     };
 
     const isLiked = comment.likes?.includes(currentUserID);
+    const hasReplies = comment.replies && comment.replies.length > 0;
 
     return (
       <div className="comment-card">
         <div className="comment-user-avatar">
           <img
-            src={defaultAvatars[comment.userID.gender] || defaultAvatars.Other}
+            src={defaultAvatars[comment.userID?.gender || "Other"]}
             alt="User Avatar"
+            onError={(e) => {
+              e.target.src = defaultAvatars.Other;
+            }}
           />
         </div>
         <div className="comment-content">
-          <div className="comment-header">
-            <span className="comment-author">{comment.userID.username}</span>
-            <div className="comment-actions">
-              <button onClick={() => setShowReplyForm(!showReplyForm)}>
-                <FaReply /> Reply
-              </button>
-              <button
-                onClick={() =>
-                  isLiked ? onUnlike(comment._id) : onLike(comment._id)
-                }
-                className={`like-button ${isLiked ? "liked" : ""}`}
-              >
-                {isLiked ? <FaHeart /> : <FaRegHeart />}
-                <span>{comment.likeCount}</span>
-              </button>
+          <div className="comment-bubble">
+            <div className="comment-header">
+              <span className="comment-author">
+                {comment.userID?.username || "Anonymous"}
+              </span>
             </div>
+            <p className="comment-text">{comment.text}</p>
           </div>
-          <p className="comment-text">{comment.text}</p>
+
+          <div className="comment-actions">
+            <button
+              onClick={() => setShowReplyForm(!showReplyForm)}
+              className="action-button"
+            >
+              Reply
+            </button>
+            <button
+              onClick={() =>
+                isLiked ? onUnlike(comment._id) : onLike(comment._id)
+              }
+              className={`action-button ${isLiked ? "liked" : ""}`}
+            >
+              {isLiked ? <FaHeart /> : <FaRegHeart />}
+              <span>{comment.likeCount || 0}</span>
+            </button>
+            {hasReplies && (
+              <button
+                onClick={() => setShowReplies(!showReplies)}
+                className="action-button view-replies"
+              >
+                {showReplies ? "Hide" : "View"} {comment.replies.length}{" "}
+                {comment.replies.length === 1 ? "reply" : "replies"}
+              </button>
+            )}
+          </div>
 
           {showReplyForm && (
             <form onSubmit={handleReplySubmit} className="reply-form">
@@ -260,11 +282,16 @@ const BlogDetail = () => {
                 placeholder="Write a reply..."
                 required
               />
-              <button type="submit">Reply</button>
+              <div className="reply-form-actions">
+                <button type="button" onClick={() => setShowReplyForm(false)}>
+                  Cancel
+                </button>
+                <button type="submit">Reply</button>
+              </div>
             </form>
           )}
 
-          {comment.replies && comment.replies.length > 0 && (
+          {hasReplies && showReplies && (
             <div className="replies-section">
               {comment.replies.map((reply) => (
                 <Comment
