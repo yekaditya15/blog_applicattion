@@ -110,12 +110,74 @@ export const addComment = createAsyncThunk(
   }
 );
 
+// Add new thunks for like/unlike
+export const likeComment = createAsyncThunk(
+  "blog/likeComment",
+  async ({ commentId }, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      const response = await axios.post(
+        `https://blog-applicattionserver.vercel.app/api/blog/comment/${commentId}/like`,
+        {},
+        { headers: { "x-auth-token": token } }
+      );
+      return { commentId, likeCount: response.data.likeCount };
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const unlikeComment = createAsyncThunk(
+  "blog/unlikeComment",
+  async ({ commentId }, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      const response = await axios.delete(
+        `https://blog-applicattionserver.vercel.app/api/blog/comment/${commentId}/like`,
+        { headers: { "x-auth-token": token } }
+      );
+      return { commentId, likeCount: response.data.likeCount };
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const initialState = {
   blogs: [],
   currentBlog: null,
   loading: false,
   error: null,
   success: false,
+};
+
+const updateNestedComments = (comments, commentId, action, userId) => {
+  return comments.map((comment) => {
+    if (comment._id === commentId) {
+      return {
+        ...comment,
+        likeCount:
+          action === "like" ? comment.likeCount + 1 : comment.likeCount - 1,
+        likes:
+          action === "like"
+            ? [...comment.likes, userId]
+            : comment.likes.filter((id) => id !== userId),
+      };
+    }
+    if (comment.replies) {
+      return {
+        ...comment,
+        replies: updateNestedComments(
+          comment.replies,
+          commentId,
+          action,
+          userId
+        ),
+      };
+    }
+    return comment;
+  });
 };
 
 const blogSlice = createSlice({
@@ -228,6 +290,28 @@ const blogSlice = createSlice({
       .addCase(addComment.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload?.message || "Failed to add comment";
+      })
+
+      // Add cases for like/unlike
+      .addCase(likeComment.fulfilled, (state, action) => {
+        if (state.currentBlog) {
+          state.currentBlog.comments = updateNestedComments(
+            state.currentBlog.comments,
+            action.payload.commentId,
+            "like",
+            action.meta.arg.userId
+          );
+        }
+      })
+      .addCase(unlikeComment.fulfilled, (state, action) => {
+        if (state.currentBlog) {
+          state.currentBlog.comments = updateNestedComments(
+            state.currentBlog.comments,
+            action.payload.commentId,
+            "unlike",
+            action.meta.arg.userId
+          );
+        }
       });
   },
 });

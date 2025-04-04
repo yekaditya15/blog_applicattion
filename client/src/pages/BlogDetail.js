@@ -4,6 +4,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import "../styles/BlogDetail.css";
 import Spinner from "../components/Spinner";
 import { showToast } from "../utils/toast";
+import { useDispatch, useSelector } from "react-redux";
+import { likeComment, unlikeComment } from "../redux/slices/blogSlice";
 // Import icons
 import {
   FaEdit,
@@ -15,6 +17,7 @@ import {
 } from "react-icons/fa";
 
 const BlogDetail = () => {
+  const dispatch = useDispatch();
   const { id } = useParams();
   const navigate = useNavigate();
   const [blog, setBlog] = useState(null);
@@ -155,7 +158,32 @@ const BlogDetail = () => {
     }
   };
 
-  const handleLike = async (commentId) => {
+  // Helper function to update comment or nested reply
+  const updateCommentLikes = (comments, commentID, action) => {
+    return comments.map((comment) => {
+      if (comment._id === commentID) {
+        // Update the current comment
+        return {
+          ...comment,
+          likes:
+            action === "like"
+              ? [...comment.likes, currentUserID]
+              : comment.likes.filter((id) => id !== currentUserID),
+          likeCount:
+            action === "like" ? comment.likeCount + 1 : comment.likeCount - 1,
+        };
+      } else if (comment.replies && comment.replies.length > 0) {
+        // Recursively update nested replies
+        return {
+          ...comment,
+          replies: updateCommentLikes(comment.replies, commentID, action),
+        };
+      }
+      return comment;
+    });
+  };
+
+  const handleLike = async (commentID) => {
     const token = localStorage.getItem("authToken");
     if (!token) {
       showToast.error("Please login to like");
@@ -164,51 +192,45 @@ const BlogDetail = () => {
     }
 
     try {
-      const response = await axios.post(
-        `https://blog-applicattionserver.vercel.app/api/blog/comment/${commentId}/like`,
-        {},
-        { headers: { "x-auth-token": token } }
+      await dispatch(
+        likeComment({
+          commentId: commentID,
+          userId: currentUserID,
+        })
+      ).unwrap();
+
+      // Update local state including nested comments
+      setComments((prevComments) =>
+        updateCommentLikes(prevComments, commentID, "like")
       );
 
-      updateCommentLikes(commentId, response.data.likeCount, true);
-    } catch (err) {
-      showToast.error(err.response?.data?.message || "Failed to like comment");
+      showToast.success("Comment liked! 👍");
+    } catch (error) {
+      showToast.error(error.message || "Failed to like comment");
     }
   };
 
-  const handleUnlike = async (commentId) => {
+  const handleUnlike = async (commentID) => {
     const token = localStorage.getItem("authToken");
     if (!token) return;
 
     try {
-      const response = await axios.delete(
-        `https://blog-applicattionserver.vercel.app/api/blog/comment/${commentId}/like`,
-        { headers: { "x-auth-token": token } }
+      await dispatch(
+        unlikeComment({
+          commentId: commentID,
+          userId: currentUserID,
+        })
+      ).unwrap();
+
+      // Update local state including nested comments
+      setComments((prevComments) =>
+        updateCommentLikes(prevComments, commentID, "unlike")
       );
 
-      updateCommentLikes(commentId, response.data.likeCount, false);
-    } catch (err) {
-      showToast.error(
-        err.response?.data?.message || "Failed to unlike comment"
-      );
+      showToast.info("Comment unliked");
+    } catch (error) {
+      showToast.error(error.message || "Failed to unlike comment");
     }
-  };
-
-  const updateCommentLikes = (commentId, likeCount, isLiked) => {
-    setComments((prevComments) => {
-      return prevComments.map((comment) => {
-        if (comment._id === commentId) {
-          return {
-            ...comment,
-            likeCount,
-            likes: isLiked
-              ? [...comment.likes, currentUserID]
-              : comment.likes.filter((id) => id !== currentUserID),
-          };
-        }
-        return comment;
-      });
-    });
   };
 
   const Comment = ({
@@ -269,8 +291,9 @@ const BlogDetail = () => {
                 isLiked ? onUnlike(comment._id) : onLike(comment._id)
               }
               className={`action-button ${isLiked ? "liked" : ""}`}
+              title={isLiked ? "Unlike this comment" : "Like this comment"}
             >
-              {isLiked ? <FaHeart /> : <FaRegHeart />}
+              {isLiked ? <FaHeart className="heart-icon" /> : <FaRegHeart />}
               <span>{comment.likeCount || 0}</span>
             </button>
             {hasReplies && (

@@ -251,7 +251,44 @@ button {
 }
 
 .action-button.liked {
-  color: #e41e3f;
+  color: #ff4b4b;
+  transform-origin: center;
+}
+
+.heart-icon {
+  transition: transform 0.2s ease;
+}
+
+.action-button.liked .heart-icon {
+  animation: heartBeat 0.3s ease-in-out;
+}
+
+@keyframes heartBeat {
+  0% {
+    transform: scale(1);
+  }
+  15% {
+    transform: scale(1.3);
+  }
+  30% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.2);
+  }
+  60% {
+    transform: scale(1);
+  }
+}
+
+.comment-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.like-count {
+  transition: all 0.2s ease;
 }
 
 /* Replies Section */

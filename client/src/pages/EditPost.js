@@ -147,9 +147,6 @@ const EditPost = () => {
           {loading ? "Updating..." : "Update Story"}
         </button>
       </form>
-      <button onClick={handleDelete} className="delete-button">
-        Delete Blog
-      </button>
     </div>
   );
 };
