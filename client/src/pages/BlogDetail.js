@@ -14,6 +14,7 @@ import {
   FaReply,
   FaHeart,
   FaRegHeart,
+  FaMagic,
 } from "react-icons/fa";
 
 const BlogDetail = () => {
@@ -27,6 +28,8 @@ const BlogDetail = () => {
   const [isOwner, setIsOwner] = useState(false);
   // Add this new state for currentUserID
   const [currentUserID, setCurrentUserID] = useState(null);
+  const [summary, setSummary] = useState("");
+  const [summarizing, setSummarizing] = useState(false);
 
   const defaultAvatars = {
     Male: "https://firebasestorage.googleapis.com/v0/b/portfolio-c5c0a.appspot.com/o/male.jpg?alt=media&token=a497fca7-8a82-47fd-ab59-71fbbd99df96",
@@ -344,6 +347,26 @@ const BlogDetail = () => {
     );
   };
 
+  const handleSummarize = async () => {
+    setSummarizing(true);
+    try {
+      const token = localStorage.getItem("authToken");
+      const response = await axios.post(
+        `https://blog-applicattionserver.vercel.app/api/blog/${id}/summarize`,
+        { text: blog.textBody },
+        { headers: { "x-auth-token": token } }
+      );
+      setSummary(response.data.summary);
+      showToast.success("Summary generated successfully!");
+    } catch (err) {
+      showToast.error(
+        err.response?.data?.message || "Failed to generate summary"
+      );
+    } finally {
+      setSummarizing(false);
+    }
+  };
+
   return (
     <div className="blog-detail-container">
       <article className="article-content">
@@ -388,6 +411,26 @@ const BlogDetail = () => {
             : "Not analyzed"}
         </p>
       </article>
+
+      {blog.textBody && (
+        <div className="blog-summary-section">
+          <button
+            onClick={handleSummarize}
+            className="summarize-btn"
+            disabled={summarizing}
+          >
+            <FaMagic className="action-icon" />
+            {summarizing ? "Generating Summary..." : "Generate AI Summary"}
+          </button>
+
+          {summary && (
+            <div className="summary-content">
+              <h4>AI-Generated Summary</h4>
+              <p>{summary}</p>
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="discussion-divider">
         <span>Discussion</span>

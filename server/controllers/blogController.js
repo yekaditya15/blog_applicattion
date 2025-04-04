@@ -1,6 +1,8 @@
 import Blog from "../models/Blog.js"; // Import Blog model
 import Comment from "../models/Comment.js";
 import { analyzeSentiment } from "../services/sentimentService.js";
+import { generateSummary } from "../services/summarizationService.js";
+
 // Create Blog with Sentiment Analysis
 export const createBlog = async (req, res) => {
   const { title, textBody, image, topic } = req.body;
@@ -231,5 +233,24 @@ export const unlikeComment = async (req, res) => {
     res.json({ likeCount: comment.likeCount });
   } catch (err) {
     res.status(400).json({ message: err.message });
+  }
+};
+
+// Summarize Blog
+export const summarizeBlog = async (req, res) => {
+  try {
+    const { text } = req.body;
+
+    if (!text) {
+      return res
+        .status(400)
+        .json({ message: "Text is required for summarization" });
+    }
+
+    const summary = await generateSummary(text);
+    res.json({ summary });
+  } catch (error) {
+    console.error("Summarization error:", error);
+    res.status(500).json({ message: "Failed to generate summary" });
   }
 };

@@ -9,6 +9,7 @@ import {
   createReply,
   likeComment,
   unlikeComment,
+  summarizeBlog,
 } from "../controllers/blogController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 
@@ -27,5 +28,8 @@ router.post("/comment/:blogID", authMiddleware, createComment); // Route to crea
 router.post("/comment/:commentID/reply", authMiddleware, createReply);
 router.post("/comment/:commentID/like", authMiddleware, likeComment);
 router.delete("/comment/:commentID/like", authMiddleware, unlikeComment);
+
+// Add this route
+router.post("/:id/summarize", authMiddleware, summarizeBlog);
 
 export default router;
