@@ -30,6 +30,6 @@ router.post("/comment/:commentID/like", authMiddleware, likeComment);
 router.delete("/comment/:commentID/like", authMiddleware, unlikeComment);
 
 // Add this route
-router.post("/:id/summarize", authMiddleware, summarizeBlog);
+router.post("/:id/summarize", summarizeBlog);
 
 export default router;
