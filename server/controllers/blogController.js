@@ -93,28 +93,36 @@ export const deleteBlog = async (req, res) => {
 // Get Blog by ID with Comments
 export const readBlogById = async (req, res) => {
   try {
-    // Find blog by ID and populate the userID field to get user details
     const blog = await Blog.findById(req.params.blogID).populate("userID");
 
     if (!blog) {
       return res.status(404).json({ message: "Blog not found" });
     }
 
-    // Fetch comments for the blog and populate both userID and replies
-    const comments = await Comment.find({
-      blogID: req.params.blogID,
-      parentCommentID: null,
-    })
-      .populate("userID")
-      .populate({
-        path: "replies",
-        populate: {
-          path: "userID",
-          model: "User",
-        },
-      });
+    // Helper function to get nested comments
+    const getCommentsWithReplies = async (parentId = null, depth = 0) => {
+      const comments = await Comment.find({
+        blogID: req.params.blogID,
+        parentCommentID: parentId,
+      })
+        .populate("userID")
+        .sort({ creationDateTime: -1 });
 
-    // Return the blog with comments
+      const commentsWithReplies = [];
+      for (const comment of comments) {
+        const replies = await getCommentsWithReplies(comment._id, depth + 1);
+        commentsWithReplies.push({
+          ...comment.toObject(),
+          depth,
+          replies,
+        });
+      }
+      return commentsWithReplies;
+    };
+
+    // Get all comments with their nested replies
+    const comments = await getCommentsWithReplies();
+
     res.json({ blog, comments });
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -150,27 +158,27 @@ export const createReply = async (req, res) => {
   const userID = req.user.userID;
 
   try {
-    // Find parent comment
     const parentComment = await Comment.findById(commentID);
     if (!parentComment) {
       return res.status(404).json({ message: "Parent comment not found" });
     }
 
-    // Create new reply
+    // Calculate depth
+    const depth = parentComment.depth + 1;
+    if (depth > 5) {
+      // Limit nesting to 5 levels
+      return res.status(400).json({ message: "Maximum nesting depth reached" });
+    }
+
     const newReply = new Comment({
       text,
       blogID: parentComment.blogID,
       userID,
       parentCommentID: commentID,
+      depth,
     });
 
     await newReply.save();
-
-    // Update parent comment's replies array
-    parentComment.replies.push(newReply._id);
-    await parentComment.save();
-
-    // Populate user info before sending response
     await newReply.populate("userID");
 
     res.status(201).json(newReply);

@@ -211,10 +211,18 @@ const BlogDetail = () => {
     });
   };
 
-  const Comment = ({ comment, onReply, onLike, onUnlike, currentUserID }) => {
+  const Comment = ({
+    comment,
+    onReply,
+    onLike,
+    onUnlike,
+    currentUserID,
+    depth = 0,
+  }) => {
     const [showReplyForm, setShowReplyForm] = useState(false);
     const [replyText, setReplyText] = useState("");
-    const [showReplies, setShowReplies] = useState(false);
+    const [showReplies, setShowReplies] = useState(depth < 2); // Auto-expand first two levels
+    const maxDepth = 5; // Maximum nesting level
 
     const handleReplySubmit = (e) => {
       e.preventDefault();
@@ -227,7 +235,7 @@ const BlogDetail = () => {
     const hasReplies = comment.replies && comment.replies.length > 0;
 
     return (
-      <div className="comment-card">
+      <div className={`comment-card depth-${depth}`}>
         <div className="comment-user-avatar">
           <img
             src={defaultAvatars[comment.userID?.gender || "Other"]}
@@ -248,12 +256,14 @@ const BlogDetail = () => {
           </div>
 
           <div className="comment-actions">
-            <button
-              onClick={() => setShowReplyForm(!showReplyForm)}
-              className="action-button"
-            >
-              Reply
-            </button>
+            {depth < maxDepth && (
+              <button
+                onClick={() => setShowReplyForm(!showReplyForm)}
+                className="action-button"
+              >
+                Reply
+              </button>
+            )}
             <button
               onClick={() =>
                 isLiked ? onUnlike(comment._id) : onLike(comment._id)
@@ -301,6 +311,7 @@ const BlogDetail = () => {
                   onLike={onLike}
                   onUnlike={onUnlike}
                   currentUserID={currentUserID}
+                  depth={depth + 1}
                 />
               ))}
             </div>

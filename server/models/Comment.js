@@ -24,12 +24,7 @@ const commentSchema = new mongoose.Schema({
     ref: "Comment",
     default: null,
   },
-  replies: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Comment",
-    },
-  ],
+  // Remove the replies array since we'll query them dynamically
   likes: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -37,6 +32,10 @@ const commentSchema = new mongoose.Schema({
     },
   ],
   likeCount: {
+    type: Number,
+    default: 0,
+  },
+  depth: {
     type: Number,
     default: 0,
   },
