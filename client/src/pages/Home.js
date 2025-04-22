@@ -3,6 +3,7 @@ import axios from "axios";
 import BlogCard from "../components/BlogCard";
 import Spinner from "../components/Spinner";
 import "../styles/Home.css";
+import { BASE_URL } from "../utils/api";
 
 const Home = ({ isAuthenticated }) => {
   const [blogs, setBlogs] = useState([]);
@@ -32,9 +33,7 @@ const Home = ({ isAuthenticated }) => {
     const fetchBlogs = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
-          "https://blog-applicattionserver.vercel.app/api/blog/readAllBlogs"
-        );
+        const response = await axios.get(`${BASE_URL}/api/blog/readAllBlogs`);
         // Shuffle the blogs before setting them
         const shuffledBlogs = shuffleArray(response.data);
         setBlogs(shuffledBlogs);

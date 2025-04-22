@@ -5,6 +5,7 @@ import "../styles/UserProfile.css";
 import BlogCard from "../components/BlogCard";
 import Spinner from "../components/Spinner";
 import { showToast } from "../utils/toast";
+import { BASE_URL } from "../utils/api";
 
 const UserProfile = () => {
   const [user, setUser] = useState(null);
@@ -23,16 +24,13 @@ const UserProfile = () => {
     const fetchUserData = async () => {
       const token = localStorage.getItem("authToken");
       try {
-        const userResponse = await axios.get(
-          "https://blog-applicattionserver.vercel.app/api/auth/profile",
-          {
-            headers: { "x-auth-token": token },
-          }
-        );
+        const userResponse = await axios.get(`${BASE_URL}/api/auth/profile`, {
+          headers: { "x-auth-token": token },
+        });
         setUser(userResponse.data);
 
         const blogsResponse = await axios.get(
-          "https://blog-applicattionserver.vercel.app/api/blog/readAllBlogs"
+          `${BASE_URL}/api/blog/readAllBlogs`
         );
         const userBlogs = blogsResponse.data.filter(
           (blog) => blog.userID._id === userResponse.data._id

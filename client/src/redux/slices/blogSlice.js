@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { BASE_URL } from "../../utils/api";
 
 // Create Blog
 export const createBlog = createAsyncThunk(
@@ -8,7 +9,7 @@ export const createBlog = createAsyncThunk(
     try {
       const token = localStorage.getItem("authToken");
       const response = await axios.post(
-        "https://blog-applicattionserver.vercel.app/api/blog/createBlog",
+        `${BASE_URL}/api/blog/createBlog`,
         { title, textBody, topic, image },
         {
           headers: { "x-auth-token": token },
@@ -26,9 +27,7 @@ export const getAllBlogs = createAsyncThunk(
   "blog/getAll",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(
-        "https://blog-applicattionserver.vercel.app/api/blog/readAllBlogs"
-      );
+      const response = await axios.get(`${BASE_URL}/api/blog/readAllBlogs`);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -42,7 +41,7 @@ export const getBlogById = createAsyncThunk(
   async (blogId, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `https://blog-applicattionserver.vercel.app/api/blog/readBlog/${blogId}`
+        `${BASE_URL}/api/blog/readBlog/${blogId}`
       );
       return response.data;
     } catch (error) {
@@ -58,7 +57,7 @@ export const updateBlog = createAsyncThunk(
     try {
       const token = localStorage.getItem("authToken");
       const response = await axios.patch(
-        `https://blog-applicattionserver.vercel.app/api/blog/editBlog/${blogId}`,
+        `${BASE_URL}/api/blog/editBlog/${blogId}`,
         { title, textBody, topic, image },
         {
           headers: { "x-auth-token": token },
@@ -77,12 +76,9 @@ export const deleteBlog = createAsyncThunk(
   async (blogId, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("authToken");
-      await axios.delete(
-        `https://blog-applicattionserver.vercel.app/api/blog/deleteBlog/${blogId}`,
-        {
-          headers: { "x-auth-token": token },
-        }
-      );
+      await axios.delete(`${BASE_URL}/api/blog/deleteBlog/${blogId}`, {
+        headers: { "x-auth-token": token },
+      });
       return blogId;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -97,7 +93,7 @@ export const addComment = createAsyncThunk(
     try {
       const token = localStorage.getItem("authToken");
       const response = await axios.post(
-        `https://blog-applicattionserver.vercel.app/api/blog/comment/${blogId}`,
+        `${BASE_URL}/api/blog/comment/${blogId}`,
         { text },
         {
           headers: { "x-auth-token": token },
@@ -117,7 +113,7 @@ export const likeComment = createAsyncThunk(
     try {
       const token = localStorage.getItem("authToken");
       const response = await axios.post(
-        `https://blog-applicattionserver.vercel.app/api/blog/comment/${commentId}/like`,
+        `${BASE_URL}/api/blog/comment/${commentId}/like`,
         {},
         { headers: { "x-auth-token": token } }
       );
@@ -134,7 +130,7 @@ export const unlikeComment = createAsyncThunk(
     try {
       const token = localStorage.getItem("authToken");
       const response = await axios.delete(
-        `https://blog-applicattionserver.vercel.app/api/blog/comment/${commentId}/like`,
+        `${BASE_URL}/api/blog/comment/${commentId}/like`,
         { headers: { "x-auth-token": token } }
       );
       return { commentId, likeCount: response.data.likeCount };

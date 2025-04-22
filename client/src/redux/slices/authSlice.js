@@ -1,15 +1,16 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { BASE_URL } from "../../utils/api";
 
 // Async thunk for login
 export const loginUser = createAsyncThunk(
   "auth/login",
   async ({ email, password }, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        "https://blog-applicattionserver.vercel.app/api/auth/login",
-        { email, password }
-      );
+      const response = await axios.post(`${BASE_URL}/api/auth/login`, {
+        email,
+        password,
+      });
       localStorage.setItem("authToken", response.data.token);
       localStorage.setItem("username", response.data.username);
       return response.data;
@@ -24,10 +25,13 @@ export const registerUser = createAsyncThunk(
   "auth/register",
   async ({ name, email, username, password, gender }, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        "https://blog-applicattionserver.vercel.app/api/auth/register",
-        { name, email, username, password, gender }
-      );
+      const response = await axios.post(`${BASE_URL}/api/auth/register`, {
+        name,
+        email,
+        username,
+        password,
+        gender,
+      });
       localStorage.setItem("authToken", response.data.token);
       localStorage.setItem("username", response.data.username);
       return response.data;

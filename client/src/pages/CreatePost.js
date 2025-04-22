@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "../styles/CreatePost.css";
 import Spinner from "../components/Spinner";
 import { showToast } from "../utils/toast";
+import { BASE_URL } from "../utils/api";
 
 const CreatePost = () => {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ const CreatePost = () => {
 
     try {
       await axios.post(
-        "https://blog-applicattionserver.vercel.app/api/blog/createBlog",
+        `${BASE_URL}/api/blog/createBlog`,
         { title, textBody, topic, image },
         {
           headers: { "x-auth-token": token },

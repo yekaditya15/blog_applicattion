@@ -6,6 +6,7 @@ import Spinner from "../components/Spinner";
 import { showToast } from "../utils/toast";
 import { useDispatch, useSelector } from "react-redux";
 import { likeComment, unlikeComment } from "../redux/slices/blogSlice";
+import { BASE_URL } from "../utils/api";
 // Import icons
 import {
   FaEdit,
@@ -42,9 +43,7 @@ const BlogDetail = () => {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const response = await axios.get(
-          `https://blog-applicattionserver.vercel.app/api/blog/readBlog/${id}`
-        );
+        const response = await axios.get(`${BASE_URL}/api/blog/readBlog/${id}`);
         setBlog(response.data.blog);
         setComments(response.data.comments);
 
@@ -78,7 +77,7 @@ const BlogDetail = () => {
 
     try {
       const response = await axios.post(
-        `https://blog-applicattionserver.vercel.app/api/blog/comment/${id}`,
+        `${BASE_URL}/api/blog/comment/${id}`,
         { text: newComment },
         { headers: { "x-auth-token": token } }
       );
@@ -95,10 +94,9 @@ const BlogDetail = () => {
     if (window.confirm("Are you sure you want to delete this blog?")) {
       try {
         const token = localStorage.getItem("authToken");
-        await axios.delete(
-          `https://blog-applicattionserver.vercel.app/api/blog/deleteBlog/${id}`,
-          { headers: { "x-auth-token": token } }
-        );
+        await axios.delete(`${BASE_URL}/api/blog/deleteBlog/${id}`, {
+          headers: { "x-auth-token": token },
+        });
         showToast.success("Blog deleted successfully");
         navigate("/");
       } catch (err) {
@@ -137,7 +135,7 @@ const BlogDetail = () => {
 
     try {
       const response = await axios.post(
-        `https://blog-applicattionserver.vercel.app/api/blog/comment/${commentId}/reply`,
+        `${BASE_URL}/api/blog/comment/${commentId}/reply`,
         { text: replyText },
         { headers: { "x-auth-token": token } }
       );
@@ -352,7 +350,7 @@ const BlogDetail = () => {
     try {
       const token = localStorage.getItem("authToken");
       const response = await axios.post(
-        `https://blog-applicattionserver.vercel.app/api/blog/${id}/summarize`,
+        `${BASE_URL}/api/blog/${id}/summarize`,
         { text: blog.textBody },
         { headers: { "x-auth-token": token } }
       );

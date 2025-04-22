@@ -6,6 +6,7 @@ import axios from "axios";
 import "../styles/CreatePost.css";
 import Spinner from "../components/Spinner";
 import { showToast } from "../utils/toast";
+import { BASE_URL } from "../utils/api";
 
 const EditPost = () => {
   const { id } = useParams();
@@ -22,9 +23,7 @@ const EditPost = () => {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const response = await axios.get(
-          `https://blog-applicattionserver.vercel.app/api/blog/readBlog/${id}`
-        );
+        const response = await axios.get(`${BASE_URL}/api/blog/readBlog/${id}`);
         const blog = response.data.blog;
         setTitle(blog.title);
         setTextBody(blog.textBody);
