@@ -6,7 +6,12 @@ const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: false, select: false }, // Made password optional for OAuth users
   isEmailVerified: { type: Boolean, default: false },
-  gender: { type: String, enum: ["Male", "Female", "Other"], required: true },
+  gender: {
+    type: String,
+    enum: ["Male", "Female", "Other", "NA"],
+    required: true,
+    default: "Other",
+  },
   topics: [
     {
       type: String,

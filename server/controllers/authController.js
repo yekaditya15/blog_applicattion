@@ -68,22 +68,29 @@ export const googleAuthSuccess = (req, res) => {
   console.log("Google authentication success handler called");
   console.log("req.user:", req.user);
 
-  // If this function is called, authentication was successful
-  // req.user contains the authenticated user
-  if (!req.user) {
-    console.log("No user found in request");
-    return res.status(401).json({ message: "Authentication failed" });
+  try {
+    // If this function is called, authentication was successful
+    // req.user contains the authenticated user
+    if (!req.user) {
+      console.log("No user found in request");
+      return res.status(401).json({ message: "Authentication failed" });
+    }
+
+    // Generate JWT token
+    const token = generateToken(req.user._id);
+    console.log("Generated token for user:", req.user.username);
+
+    // Redirect to frontend with token
+    // In production, you should use a more secure method to pass the token
+    const redirectUrl = `${process.env.CLIENT_URL}/google-auth-callback?token=${token}&username=${req.user.username}`;
+    console.log("Redirecting to:", redirectUrl);
+    res.redirect(redirectUrl);
+  } catch (error) {
+    console.error("Error in Google authentication success handler:", error);
+    res
+      .status(500)
+      .json({ message: "Authentication error", error: error.message });
   }
-
-  // Generate JWT token
-  const token = generateToken(req.user._id);
-  console.log("Generated token for user:", req.user.username);
-
-  // Redirect to frontend with token
-  // In production, you should use a more secure method to pass the token
-  const redirectUrl = `${process.env.CLIENT_URL}/google-auth-callback?token=${token}&username=${req.user.username}`;
-  console.log("Redirecting to:", redirectUrl);
-  res.redirect(redirectUrl);
 };
 
 // Google authentication failure handler

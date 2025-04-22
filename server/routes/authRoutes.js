@@ -23,10 +23,31 @@ router.get(
 
 router.get(
   "/google/callback",
-  passport.authenticate("google", {
-    failureRedirect: "/api/auth/google/failure",
-    session: false,
-  }),
+  (req, res, next) => {
+    console.log("Google callback received");
+    passport.authenticate(
+      "google",
+      {
+        failureRedirect: "/api/auth/google/failure",
+        session: false,
+      },
+      (err, user, info) => {
+        console.log("Passport authenticate callback");
+        if (err) {
+          console.error("Passport authentication error:", err);
+          return res
+            .status(500)
+            .json({ message: "Authentication error", error: err.message });
+        }
+        if (!user) {
+          console.error("No user returned from authentication");
+          return res.redirect("/api/auth/google/failure");
+        }
+        req.user = user;
+        next();
+      }
+    )(req, res, next);
+  },
   googleAuthSuccess
 );
 

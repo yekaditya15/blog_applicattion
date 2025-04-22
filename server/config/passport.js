@@ -69,7 +69,7 @@ passport.use(
           email: profile.emails[0].value,
           username: username,
           isEmailVerified: true, // Google already verified the email
-          gender: "NA", // Default value, can be updated by user later
+          gender: "Other", // Default value, can be updated by user later
           profilePicture: profile.photos[0].value,
           authProvider: "google",
         });
