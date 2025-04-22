@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { registerUser, clearError } from "../redux/slices/authSlice";
+import {
+  registerUser,
+  clearError,
+  initiateGoogleLogin,
+} from "../redux/slices/authSlice";
 import {
   FaUser,
   FaEnvelope,
@@ -10,6 +14,7 @@ import {
   FaEyeSlash,
   FaUserCircle,
   FaVenusMars,
+  FaGoogle,
 } from "react-icons/fa";
 import "../styles/Register.css";
 import { showToast } from "../utils/toast";
@@ -272,6 +277,20 @@ const Register = () => {
               )}
             </button>
           </form>
+
+          <div className="or-divider">
+            <span>OR</span>
+          </div>
+
+          <button
+            type="button"
+            className="google-login-btn"
+            onClick={initiateGoogleLogin}
+            disabled={loading}
+          >
+            <FaGoogle className="google-icon" />
+            Sign up with Google
+          </button>
 
           <div className="login-prompt">
             <span>Already have an account?</span>

@@ -224,6 +224,60 @@ select.input-field {
   transform: none;
 }
 
+/* Google Login Button */
+.or-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0;
+  color: #6b7280;
+}
+
+.or-divider::before,
+.or-divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.or-divider span {
+  padding: 0 10px;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+}
+
+.google-login-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: white;
+  color: #4a5568;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.google-login-btn:hover {
+  background-color: #f9fafb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.google-login-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.google-icon {
+  color: #ea4335;
+  font-size: 1.2rem;
+}
+
 .login-prompt {
   margin-top: 20px;
   text-align: center;

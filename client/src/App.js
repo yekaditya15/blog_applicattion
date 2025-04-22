@@ -16,6 +16,7 @@ import CreatePost from "./pages/CreatePost";
 import BlogDetail from "./pages/BlogDetail";
 import EditPost from "./pages/EditPost";
 import UserProfile from "./components/UserProfile";
+import GoogleAuthCallback from "./pages/GoogleAuthCallback";
 
 const App = () => {
   const { isAuthenticated } = useSelector((state) => state.auth);
@@ -46,6 +47,7 @@ const App = () => {
           path="/profile"
           element={isAuthenticated ? <UserProfile /> : <Navigate to="/login" />}
         />
+        <Route path="/google-auth-callback" element={<GoogleAuthCallback />} />
       </Routes>
       <ToastContainer
         position="top-right"

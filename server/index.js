@@ -5,6 +5,9 @@ import authRoutes from "./routes/authRoutes.js";
 import blogRoutes from "./routes/blogRoutes.js";
 import cors from "cors";
 import morgan from "morgan";
+import passport from "passport";
+import session from "express-session";
+import "./config/passport.js";
 
 dotenv.config();
 
@@ -27,6 +30,21 @@ app.use(
     credentials: true,
   })
 );
+
+// Configure session
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "your-session-secret",
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: process.env.NODE_ENV === "production" },
+  })
+);
+
+// Initialize Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
 // ✅ **Home Route (Check Deployment)**
 app.get("/", (req, res) => {
   res.send("🚀 Backend is successfully deployed and running!");

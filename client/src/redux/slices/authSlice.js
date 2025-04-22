@@ -41,6 +41,11 @@ export const registerUser = createAsyncThunk(
   }
 );
 
+// Function to initiate Google login
+export const initiateGoogleLogin = () => {
+  window.location.href = `${BASE_URL}/api/auth/google`;
+};
+
 const initialState = {
   isAuthenticated: !!localStorage.getItem("authToken"),
   username: localStorage.getItem("username") || "",
@@ -60,6 +65,13 @@ const authSlice = createSlice({
       state.error = null;
     },
     clearError: (state) => {
+      state.error = null;
+    },
+    // Handle Google login success
+    googleLoginSuccess: (state, action) => {
+      state.isAuthenticated = true;
+      state.username = action.payload.username;
+      state.loading = false;
       state.error = null;
     },
   },
@@ -98,5 +110,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, clearError } = authSlice.actions;
+export const { logout, clearError, googleLoginSuccess } = authSlice.actions;
 export default authSlice.reducer;

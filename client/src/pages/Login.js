@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser, clearError } from "../redux/slices/authSlice";
+import {
+  loginUser,
+  clearError,
+  initiateGoogleLogin,
+} from "../redux/slices/authSlice";
 import {
   FaEnvelope,
   FaLock,
@@ -11,6 +15,7 @@ import {
   FaUsers,
   FaComments,
   FaHeart,
+  FaGoogle,
 } from "react-icons/fa";
 import "../styles/Login.css";
 import { showToast } from "../utils/toast";
@@ -162,6 +167,20 @@ const Login = () => {
               )}
             </button>
           </form>
+
+          <div className="or-divider">
+            <span>OR</span>
+          </div>
+
+          <button
+            type="button"
+            className="google-login-btn"
+            onClick={initiateGoogleLogin}
+            disabled={loading}
+          >
+            <FaGoogle className="google-icon" />
+            Sign in with Google
+          </button>
 
           <div className="signup-prompt">
             <span>New to WriteHub?</span>

@@ -3,13 +3,34 @@ import {
   registerUser,
   loginUser,
   getUserProfile,
+  googleAuthSuccess,
+  googleAuthFailure,
 } from "../controllers/authController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
+import passport from "passport";
 
 const router = express.Router();
 
+// Local authentication routes
 router.post("/register", registerUser);
 router.post("/login", loginUser);
+
+// Google OAuth routes
+router.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+router.get(
+  "/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: "/api/auth/google/failure",
+    session: false,
+  }),
+  googleAuthSuccess
+);
+
+router.get("/google/failure", googleAuthFailure);
 
 // Protected route to get user profile
 router.get("/profile", authMiddleware, getUserProfile);
