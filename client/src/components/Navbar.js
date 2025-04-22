@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { FaHome, FaCaretDown, FaBars, FaTimes } from "react-icons/fa";
+import {
+  FaHome,
+  FaCaretDown,
+  FaBars,
+  FaTimes,
+  FaHandHoldingHeart,
+} from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../redux/slices/authSlice";
 import "../styles/Navbar.css";
@@ -16,6 +22,12 @@ const Navbar = () => {
     dispatch(logout());
     showToast.success("Logged out successfully");
     setIsDropdownOpen(false);
+    setIsMobileMenuOpen(false);
+  };
+
+  const handleDonate = () => {
+    window.open("https://razorpay.me/@dy1487", "_blank");
+    showToast.success("Thank you for your support!");
     setIsMobileMenuOpen(false);
   };
 
@@ -42,6 +54,10 @@ const Navbar = () => {
       </div>
 
       <div className={`navbar-right ${isMobileMenuOpen ? "show" : ""}`}>
+        <button className="donate-button" onClick={handleDonate}>
+          <FaHandHoldingHeart className="donate-icon" /> Donate
+        </button>
+
         {isAuthenticated ? (
           <>
             <Link

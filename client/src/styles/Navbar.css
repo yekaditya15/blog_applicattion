@@ -312,6 +312,32 @@
   background-color: #1f2942; /* Darker shade of #2e3a59 for hover state */
 }
 
+/* Donate Button */
+.donate-button {
+  background-color: #ff6b6b;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 30px;
+  border: none;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-right: 15px;
+}
+
+.donate-button:hover {
+  background-color: #ff5252;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(255, 107, 107, 0.3);
+}
+
+.donate-icon {
+  font-size: 16px;
+}
+
 /* Authentication Buttons - Login and Signup */
 .auth-links {
   display: flex;
@@ -332,4 +358,15 @@
   color: #2e3a59;
   font-weight: 600;
   text-decoration: none;
+}
+
+/* Mobile Responsive for Donate Button */
+@media (max-width: 768px) {
+  .donate-button {
+    width: 100%;
+    justify-content: center;
+    margin-right: 0;
+    margin-bottom: 10px;
+    padding: 12px;
+  }
 }
